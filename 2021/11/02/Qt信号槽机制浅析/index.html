@@ -22,7 +22,7 @@
 
   
 
-  <title>刘剑峰</title>
+  <title>Qt信号槽机制浅析 | 刘剑峰</title>
 
   
 
@@ -90,55 +90,58 @@
 </header>
 
     
+<article id="post">
+  <div class="post-title">Qt信号槽机制浅析</div>
+  
+<div class="post-meta">
+    
+    
+      <div class="post-meta-item date">
+        <span title="Created 2021.11.02"><i class="far fa-calendar-alt"></i> 2021.11.02</span>
+      </div>
+      <div class="post-meta-item updated">
+        <span title="Updated 2021.11.04"><i class="far fa-calendar-check"></i> 2021.11.04</span>
+      </div>
+     
+     
+    
+     <div class="post-meta-item wordcount">
+        
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">172 words</span>
+           
+        
+          <i class="far fa-clock"></i> <span class="post-count">1 min</span>
+                               
+      </div>
+     
+</div>
 
-  <div id="recent-posts">
-    
-      <div class="recent-post-item">
-          <div class="post-title ">
-            <a href="/2021/11/02/Qt%E4%BF%A1%E5%8F%B7%E6%A7%BD%E6%9C%BA%E5%88%B6%E6%B5%85%E6%9E%90/">Qt信号槽机制浅析</a>
-          </div>
-          <div class="post-meta">
-            
-            
-              <div class="post-meta-item date">
-                <span title="Created 2021.11.02"><i class="far fa-calendar-alt"></i> 2021.11.02</span>
-              </div>
-              <div class="post-meta-item updated">
-                <span title="Updated 2021.11.04"><i class="far fa-calendar-check"></i> 2021.11.04</span>
-              </div>
-             
-             
-            
-             <div class="post-meta-item wordcount">
-                
-                  <i class="fas fa-pencil-alt"></i> <span class="post-count">172 words</span>
-                   
-                
-                  <i class="far fa-clock"></i> <span class="post-count">1 min</span>
-                                       
-              </div>
-             
-        </div>
-          <div class="content">
-            
-              <p>Qt是一个跨平台的C++软件开发框架，而Qt的核心机制是信号槽，关于信号槽，Qt官方的表述是:</p>
-             
-          </div>
-        </div>
-      <div class="post-footer">
+
+  
+  <div class="content">
+        <div><p>Qt是一个跨平台的C++软件开发框架，而Qt的核心机制是信号槽，关于信号槽，Qt官方的表述是:</p>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Signals and slots are used for communication between objects. The signals and slots mechanism is a central feature of Qt and </span><br><span class="line">probably the part that differs most from the features provided by other frameworks. Signals and slots are made possible by </span><br><span class="line">Qt&#x27;s meta-object system.</span><br></pre></td></tr></table></figure>
+<p>信号和槽被用于对象间的沟通，信号槽机制是Qt的核心特点，也是Qt与其他应用框架的不同之处，信号槽的机制得益于Qt的元对象系统。<br>下面分几步来对Qt的信号槽机制做一个简单分析。</p>
+<h2 id="从Qt程序的编译过程讲起"><a href="#从Qt程序的编译过程讲起" class="headerlink" title="从Qt程序的编译过程讲起"></a>从Qt程序的编译过程讲起</h2></div>
         
-        <div class="readmore"><a href="/2021/11/02/Qt%E4%BF%A1%E5%8F%B7%E6%A7%BD%E6%9C%BA%E5%88%B6%E6%B5%85%E6%9E%90/">Read More »</a></div>   
-        
-    </div>
-    
   </div>
 
-
-
-<nav class="paginator">
+    <div class="post_tags">
       
-            
-</nav>
+        <i class="fas fa-tag"></i> <a href="/tags/Qt/" class="tag">Qt</a>
+      
+    </div>
+    <div class="post-nav">
+      
+      
+    </div>
+      
+
+
+
+
+</article>
 
     
 <a id="gotop" href="javascript:" title="返回顶部"><i class="fa fa-arrow-up"></i></a>

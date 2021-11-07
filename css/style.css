@@ -42,9 +42,6 @@ a {
   outline: none;
   border: none;
 }
-li {
-  list-style-type: none;
-}
 .pagetitle {
   text-align: center;
   padding-bottom: 2em;
@@ -750,6 +747,13 @@ p {
 }
 .content h3:hover {
   padding-left: 0.5rem;
+}
+.content ol,
+ul {
+  margin-top: 0.4rem;
+  margin-left: auto;
+  padding: 0 0 0 0.2rem;
+  counter-reset: li;
 }
 @font-face {
   font-family: 'chinese-zodiac';

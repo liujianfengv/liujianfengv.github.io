@@ -164,7 +164,10 @@
 <p>运行验证一下:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ./testSignalSlot.exe</span><br><span class="line">Hello Qt!</span><br></pre></td></tr></table></figure>
 
-<h2 id="用标准C-完成一个简易的信号槽"><a href="#用标准C-完成一个简易的信号槽" class="headerlink" title="用标准C++完成一个简易的信号槽"></a>用标准C++完成一个简易的信号槽</h2><p>经过第一部分的了解后，我们知道元对象系统就是使用moc为我们生成moc_xxx.cpp文件，那么我们应该可以手动编写代码来完成moc所做的事情，用标准C++来实现一个简易的信号槽机制。我们将手动编写以下几个文件。样例代码上传在github上<a target="_blank" rel="noopener" href="https://github.com/liujianfengv/iso-cpp-reimp-signal-slot">iso-cpp-reimp-signal-slot</a></p>
+<h2 id="用标准C-完成一个简易的信号槽"><a href="#用标准C-完成一个简易的信号槽" class="headerlink" title="用标准C++完成一个简易的信号槽"></a>用标准C++完成一个简易的信号槽</h2><p>经过第一部分的了解后，我们知道元对象系统就是使用moc为我们生成moc_xxx.cpp文件，那么我们应该可以手动编写代码来完成moc所做的事情，用标准C++来实现一个简易的信号槽机制。我们将手动编写以下几个文件。样例代码上传在github上</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/liujianfengv/iso-cpp-reimp-signal-slot">iso-cpp-reimp-signal-slot</a></li>
+</ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">├── main.cpp</span><br><span class="line">├── moc_object.cpp</span><br><span class="line">├── object.cpp</span><br><span class="line">├── object.h</span><br></pre></td></tr></table></figure>
 
 <p>程序运行时，connect借助两个字符串，就可以把信号和槽的关联建立起来，那么完成这两件是需要</p>

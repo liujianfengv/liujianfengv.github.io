@@ -15,7 +15,7 @@ body {
   min-height: 100%;
   background: var(--bg);
   font-size: 16px;
-  font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: Microsoft YaHei, Segoe UI Semibold, Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   -webkit-tap-highlight-color: transparent;
 }
 ::selection {
@@ -264,7 +264,7 @@ li {
 .header .title,
 .header .logo {
   text-align: center;
-  font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: Microsoft YaHei, Segoe UI Semibold, Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   text-decoration: none;
   font-size: 5rem;
   font-weight: bold;
@@ -375,7 +375,7 @@ li {
   transition: all 400ms ease-out;
 }
 .nav .layui-container .nav-title {
-  font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: Microsoft YaHei, Segoe UI Semibold, Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   padding: 0.5em;
   font-weight: 700;
   font-size: 1.5em;
@@ -750,55 +750,6 @@ p {
 }
 .content h3:hover {
   padding-left: 0.5rem;
-}
-.content ol,
-ul {
-  margin-top: 0.4rem;
-  padding: 0 0 0 0.2rem;
-  list-style: none;
-  counter-reset: li;
-}
-.content li {
-  position: relative;
-  margin: 0.2rem 0;
-  padding: 0.1rem 0.5rem 0.1rem 1.5rem;
-}
-.content li:before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: #dceef7;
-  color: #000;
-  cursor: pointer;
-  transition: all 0.3s ease-out;
-}
-.content li:hover:before {
-  transform: rotate(360deg);
-}
-.content ol>li:before {
-  margin-top: 0.45rem;
-  width: 1.2rem;
-  height: 1.2rem;
-  border-radius: 0.6rem;
-  content: counter(li);
-  counter-increment: li;
-  text-align: center;
-  font-size: 0.6rem;
-  line-height: 1.2rem;
-}
-.content ul:not(#maina)> li:hover:before {
-  border-color: #673ab7;
-}
-.content ul:not(#maina):not(.search-result-list)> li:before {
-  top: 12px;
-  margin-left: 0.2rem;
-  width: 0.4rem;
-  height: 0.4rem;
-  border: 0.15rem solid #53c5f9;
-  border-radius: 0.6rem;
-  background: transparent;
-  content: '';
-  line-height: 0.3rem;
 }
 @font-face {
   font-family: 'chinese-zodiac';

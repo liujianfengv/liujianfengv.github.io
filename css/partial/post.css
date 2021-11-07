@@ -218,7 +218,6 @@ p {
 ul {
   margin-top: 0.4rem;
   padding: 0 0 0 0.2rem;
-  list-style: none;
   counter-reset: li;
 }
 .content li {
@@ -248,18 +247,4 @@ ul {
   text-align: center;
   font-size: 0.6rem;
   line-height: 1.2rem;
-}
-.content ul:not(#maina)> li:hover:before {
-  border-color: #673ab7;
-}
-.content ul:not(#maina):not(.search-result-list)> li:before {
-  top: 12px;
-  margin-left: 0.2rem;
-  width: 0.4rem;
-  height: 0.4rem;
-  border: 0.15rem solid #53c5f9;
-  border-radius: 0.6rem;
-  background: transparent;
-  content: '';
-  line-height: 0.3rem;
 }

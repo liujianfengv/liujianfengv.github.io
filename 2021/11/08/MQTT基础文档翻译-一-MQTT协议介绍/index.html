@@ -131,9 +131,14 @@
 <li>保证数据传输的质量</li>
 <li>轻量级并且高效使用带宽</li>
 <li>Data agnostic</li>
-<li>Continuous session awareness<br>这些目标一直是MQTT的核心。然而，协议最专注的部分已经由嵌入式设备转换到物联网应用上了。这个转换使MQTT所代表的全拼词语有了一些争议。简短的答案是，MQTT不再是一个缩写，而是一个协议的名称。<br /><br>较为详细的答案是 MQTT在之前是MQ Telemetry Transport的缩写 <br /><br>“MQ”代表的是IBM为了支持MQ Telemetry Transport开发的产品，当Andy和Arlen在1999年创造这个协议时，他们在IBM产品之后将其命名为MQTT。 许多地方错误的将MQTT解释为消息队列协议。MQTT不是一个传统的消息队列解决方案(尽管MQTT在一些特殊情况可能会用队列缓冲消息，我们在后面的章节会讲到)。在1999之后的10年里，IBM在内部使用这个协议，直到2010年他们发布了MQTT3.1作为一个无版权的发布版本。从那时开始，每个人都被欢迎去开发和使用MQTT协议。<br /><br>我们在2012年开始了解MQTT，并在同年发布了HiveMQ的第一个版本。2013年，我们公开发布了HiveMQ。随着协议规范的发布，IBM捐献MQTT客户端实现给Eclipse基金会新成立的Paho课题。这些件事对MQTT协议有重大的影响，因为没有生态支持的协议很难被广泛的使用。<h3 id="OASIS标准和当前版本"><a href="#OASIS标准和当前版本" class="headerlink" title="OASIS标准和当前版本"></a>OASIS标准和当前版本</h3>大约在MQTT初始版本发布三年后，MQTT将由OASIS（一个致力于推进标准化的开源组织）定制标准。AMQP,SAML,和DocBook只是OASIS标准的一部分。标准化进程持续了大约一年，在2014年10月29日MQTT成为一个正式批准的OASIS标准。从3.1到3.1.1的小版本变化展现了和之前版本的变化。对于这些变化的细节信息，看另一篇博客 3.1.1带来的优势。 <br /><br>在2019年3月，OASIS批准了新的MQTT5规范。新的MQTT版本引进了将物联网程序部署在云平台上所必须的特性，其中要求在实现关键消息的传输时需要有更高的可靠性和完善的错误处理。如果想要更多的了解MQTT5，请查看我们MQTT5相关系列文章。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">我们强烈建议使用MQTT 5。</span><br></pre></td></tr></table></figure>
-到了我们系列文章第一篇的结尾了，希望你阅读愉快并且了解到一些MQTT的新闻。感谢你的阅读请在下周继续关注我们的下篇介绍文章，关于发布和订阅模式还有MQTT与消息队列的不同之处 <br /></li>
+<li>Continuous session awareness</li>
 </ul>
+<p>这些目标一直是MQTT的核心。然而，协议最专注的部分已经由嵌入式设备转换到物联网应用上了。这个转换使MQTT所代表的全拼词语有了一些争议。简短的答案是，MQTT不再是一个缩写，而是一个协议的名称。<br /><br>较为详细的答案是 MQTT在之前是MQ Telemetry Transport的缩写 <br /><br>“MQ”代表的是IBM为了支持MQ Telemetry Transport开发的产品，当Andy和Arlen在1999年创造这个协议时，他们在IBM产品之后将其命名为MQTT。 许多地方错误的将MQTT解释为消息队列协议。MQTT不是一个传统的消息队列解决方案(尽管MQTT在一些特殊情况可能会用队列缓冲消息，我们在后面的章节会讲到)。在1999之后的10年里，IBM在内部使用这个协议，直到2010年他们发布了MQTT3.1作为一个无版权的发布版本。从那时开始，每个人都被欢迎去开发和使用MQTT协议。<br /><br>我们在2012年开始了解MQTT，并在同年发布了HiveMQ的第一个版本。2013年，我们公开发布了HiveMQ。随着协议规范的发布，IBM捐献MQTT客户端实现给Eclipse基金会新成立的Paho课题。这些件事对MQTT协议有重大的影响，因为没有生态支持的协议很难被广泛的使用。</p>
+<h3 id="OASIS标准和当前版本"><a href="#OASIS标准和当前版本" class="headerlink" title="OASIS标准和当前版本"></a>OASIS标准和当前版本</h3><p>大约在MQTT初始版本发布三年后，MQTT将由OASIS（一个致力于推进标准化的开源组织）定制标准。AMQP,SAML,和DocBook只是OASIS标准的一部分。标准化进程持续了大约一年，在2014年10月29日MQTT成为一个正式批准的OASIS标准。从3.1到3.1.1的小版本变化展现了和之前版本的变化。对于这些变化的细节信息，看另一篇博客 3.1.1带来的优势。 <br /><br>在2019年3月，OASIS批准了新的MQTT5规范。新的MQTT版本引进了将物联网程序部署在云平台上所必须的特性，其中要求在实现关键消息的传输时需要有更高的可靠性和完善的错误处理。如果想要更多的了解MQTT5，请查看我们MQTT5相关系列文章。</p>
+<blockquote>
+<p>我们强烈建议使用MQTT 5。</p>
+</blockquote>
+<p>到了我们系列文章第一篇的结尾了，希望你阅读愉快并且了解到一些MQTT的新闻。感谢你的阅读请在下周继续关注我们的下篇介绍文章，关于发布和订阅模式还有MQTT与消息队列的不同之处 <br /></p>
 <p>如果你有任何反馈或问题，请在评论中告诉我们。</p>
 </div>
         

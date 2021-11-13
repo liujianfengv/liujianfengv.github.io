@@ -194,3 +194,14 @@ ul {
   padding: 0 0 0 0.2rem;
   counter-reset: li;
 }
+blockquote {
+  border-left: 0.25rem solid #e5e5e5;
+  color: #979797;
+  margin: 0.8rem 0;
+  padding: 0.5rem 1rem;
+}
+blockquote > p {
+  color: #979797;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+}

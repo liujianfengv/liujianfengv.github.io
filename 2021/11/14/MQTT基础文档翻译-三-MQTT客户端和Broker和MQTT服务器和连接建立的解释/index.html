@@ -100,17 +100,17 @@
         <span title="Created 2021.11.14"><i class="far fa-calendar-alt"></i> 2021.11.14</span>
       </div>
       <div class="post-meta-item updated">
-        <span title="Updated 2021.11.14"><i class="far fa-calendar-check"></i> 2021.11.14</span>
+        <span title="Updated 2021.11.15"><i class="far fa-calendar-check"></i> 2021.11.15</span>
       </div>
      
      
     
      <div class="post-meta-item wordcount">
         
-          <i class="fas fa-pencil-alt"></i> <span class="post-count">260 words</span>
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.1k words</span>
            
         
-          <i class="far fa-clock"></i> <span class="post-count">1 min</span>
+          <i class="far fa-clock"></i> <span class="post-count">3 min</span>
                                
       </div>
      
@@ -125,6 +125,20 @@
 <ul>
 <li>发布/订阅模式解耦了消息发送方客户端即发布者和消息接收方客户端即订阅者。</li>
 <li>MQTT使用消息中的话题(topic)信息来决定这条消息被发送给哪个订阅者。话题是一个有层次结构的字符串，可以用来过滤和路由消息。</li>
+</ul>
+<p>上篇文章我们从高级别的抽象介绍了发布/订阅模式还有发布/订阅模式与传统消息队列的区别。这篇文章我们将讲述一些更加贴近实际的内容: MQTT客户端和broker的定义，MQTT连接的基础，MQTT连接时的参数和通过broker的确认(Ack)来确立连接。</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>因为MQTT解耦了发布者和订阅者，客户端连接通常被broker所处理，在我们了解连接的细节之前，我们需要先清楚客户端和broker的意义。</p>
+<ul>
+<li>客户端(Client)</li>
+</ul>
+<p>当我们谈论客户端，通常指的是MQTT客户端，包括发布者和订阅者。发布者和订阅者的区别在于客户端正在发布消息还是正在订阅一个主题，并接收消息。(发布和订阅可以同时实现在一个客户端中)。一个MQTT客户端可以是运行着MQTT库并且通过网络和一个MQTT broker连接的任意设备(从微型控制器到大型服务器)。例如，MQTT客户端可以是一个非常小的、资源受限的设备拥有一个最小的实现库，通过无线网连接broker。MQTT客户端也可以是一台有MQTT客户端图形界面用来测试的计算机。总之，通过在TCP/IP之上的MQTT进行数据交互的设备都可以称为MQTT客户端。客户端实现MQTT协议是非常容易的。由于易于实现的特性MQTT特别适合体积小的设备。MQTT客户端开发库有许多语言的版本，例如Android,Arduino,C,C++,C#,Go,iOS,Java,JavaScript,和.NET。你可以在MQTT维基上看到完整的列表。</p>
+<ul>
+<li>Broker</li>
+</ul>
+<p>MQTT客户端对应的是MQTT broker。 broker是发布/订阅模式的核心。根据实现，broker可以同时处理百万以上的MQTT客户端。<br/><br>broker的责任是接收全部消息，过滤消息，确定由谁订阅了某条消息，并将消息发送给订阅该话题的客户端。broker持有所有持续会话客户端的会话信息，包括订阅和错过的消息。broker的另一个责任是授权和认证客户端。<br>通常，broker是可扩展的，这有助于定制授权、认证和集成到后端系统。因为broker通常是直接暴露到网络的模块、处理许多客户端、并且需要传递消息到下游的分析和处理系统所以集成是非常重要的。像上篇文章讨论的那样，订阅消息并不是唯一的选择。简而言之，broker是一个每个消息必须通过的消息枢纽。所以，它必须高度可扩展，易于集成到后端系统，易于监控，具有稳定性。HiveMQ通过使用先进的事件驱动网络、开放的扩展系统和提供标准监控来实现这些需求。</p>
+<h3 id="MQTT-Connection"><a href="#MQTT-Connection" class="headerlink" title="MQTT Connection"></a>MQTT Connection</h3><p>MQTT是基于TCP/IP的，客户端和broker都需要拥有TCP/IP协议栈。<br><img src= "/img/loading.gif" data-src="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/mqtt-tcp-ip-stack.png"><br>MQTT连接总是在客户端和broker之间，客户端之间不会直接连接。为了初始化一个连接，客户端发送CONNECT消息给broker。broker回复一个CONNACK消息和状态码。一旦连接被建立。broker会保持连接打开，直到客户端发送断开命令或者连接中断。<br><img src= "/img/loading.gif" data-src="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/connect-flow.gif"></p>
+<ul>
+<li>MQTT通过NAT(network address translation)连接</li>
 </ul>
 </div>
         

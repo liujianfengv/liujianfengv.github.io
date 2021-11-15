@@ -107,10 +107,10 @@
     
      <div class="post-meta-item wordcount">
         
-          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.4k words</span>
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.6k words</span>
            
         
-          <i class="far fa-clock"></i> <span class="post-count">4 min</span>
+          <i class="far fa-clock"></i> <span class="post-count">5 min</span>
                                
       </div>
      
@@ -142,7 +142,15 @@
 </ul>
 <p>在许多实际情况中，MQTT客户端处于一个使用NAT的路由器之后。路由器会完成一个公有地址到私有地址(像192.168.x.x,10.0.x.x)的转换。正如我们之前提到的，MQTT客户端通过发送CONNECT消息来建立连接。broker有一个公网IP地址，并且在收到CONNECT消息之后，就有了与客户端双向通信的能力，所以即便客户端在一个NAT网络之后不会有什么问题。</p>
 <ul>
-<li>客户端通过CONNECT消息初始化连接<br>现在我们来看一看MQTT的CONNECT消息。为了初始化连接，客户端发送一个命令消息给broker。如果这条消息格式是错误的，或者打开网络socket和发送连接消息之间花费了太多时间，broker会关闭这个连接。这样可以防止恶意的客户端降低broker的速度。一个正确的MQTT客户端会发送一个以下内容的消息:<br><img src= "/img/loading.gif" data-src="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/connect.png"></li>
+<li>客户端通过CONNECT消息初始化连接</li>
+</ul>
+<p>现在我们来看一看MQTT的CONNECT消息。为了初始化连接，客户端发送一个命令消息给broker。如果这条消息格式是错误的，或者打开网络socket和发送连接消息之间花费了太多时间，broker会关闭这个连接。这样可以防止恶意的客户端降低broker的速度。一个正确的MQTT客户端会发送一个以下内容的消息:<br><img src= "/img/loading.gif" data-src="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/connect.png"><br>CONNECT消息中包含的一些内容可能是面向MQTT库实现者而不是使用者的，更多细节，查看MQTT3.1.1规范。我们将关注以下几个选项。</p>
+<ul>
+<li>ClientId</li>
+</ul>
+<p>客户端标识符用来区分连接到MQTT broker的每一个MQTT客户端。broker通过使用ClientId来验证客户端和客户端当前的状态。所以，这个id需要是唯一的。在MQTT 3.1.1中，你可以发送一个空的ClientId，如果你不需要broker记录状态。空的ClientId会使一个连接没有任何状态信息，在这种情况下，清空会话的标志必须被设置成true，否则broker会拒绝这个连接。</p>
+<ul>
+<li>CleanSession</li>
 </ul>
 </div>
         

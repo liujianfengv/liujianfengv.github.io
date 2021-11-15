@@ -107,10 +107,10 @@
     
      <div class="post-meta-item wordcount">
         
-          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.1k words</span>
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.4k words</span>
            
         
-          <i class="far fa-clock"></i> <span class="post-count">3 min</span>
+          <i class="far fa-clock"></i> <span class="post-count">4 min</span>
                                
       </div>
      
@@ -139,6 +139,10 @@
 <h3 id="MQTT-Connection"><a href="#MQTT-Connection" class="headerlink" title="MQTT Connection"></a>MQTT Connection</h3><p>MQTT是基于TCP/IP的，客户端和broker都需要拥有TCP/IP协议栈。<br><img src= "/img/loading.gif" data-src="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/mqtt-tcp-ip-stack.png"><br>MQTT连接总是在客户端和broker之间，客户端之间不会直接连接。为了初始化一个连接，客户端发送CONNECT消息给broker。broker回复一个CONNACK消息和状态码。一旦连接被建立。broker会保持连接打开，直到客户端发送断开命令或者连接中断。<br><img src= "/img/loading.gif" data-src="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/connect-flow.gif"></p>
 <ul>
 <li>MQTT通过NAT(network address translation)连接</li>
+</ul>
+<p>在许多实际情况中，MQTT客户端处于一个使用NAT的路由器之后。路由器会完成一个公有地址到私有地址(像192.168.x.x,10.0.x.x)的转换。正如我们之前提到的，MQTT客户端通过发送CONNECT消息来建立连接。broker有一个公网IP地址，并且在收到CONNECT消息之后，就有了与客户端双向通信的能力，所以即便客户端在一个NAT网络之后不会有什么问题。</p>
+<ul>
+<li>客户端通过CONNECT消息初始化连接<br>现在我们来看一看MQTT的CONNECT消息。为了初始化连接，客户端发送一个命令消息给broker。如果这条消息格式是错误的，或者打开网络socket和发送连接消息之间花费了太多时间，broker会关闭这个连接。这样可以防止恶意的客户端降低broker的速度。一个正确的MQTT客户端会发送一个以下内容的消息:<br><img src= "/img/loading.gif" data-src="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/connect.png"></li>
 </ul>
 </div>
         

@@ -100,17 +100,17 @@
         <span title="Created 2021.11.14"><i class="far fa-calendar-alt"></i> 2021.11.14</span>
       </div>
       <div class="post-meta-item updated">
-        <span title="Updated 2021.11.15"><i class="far fa-calendar-check"></i> 2021.11.15</span>
+        <span title="Updated 2021.11.16"><i class="far fa-calendar-check"></i> 2021.11.16</span>
       </div>
      
      
     
      <div class="post-meta-item wordcount">
         
-          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.6k words</span>
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.8k words</span>
            
         
-          <i class="far fa-clock"></i> <span class="post-count">5 min</span>
+          <i class="far fa-clock"></i> <span class="post-count">6 min</span>
                                
       </div>
      
@@ -152,6 +152,11 @@
 <ul>
 <li>CleanSession</li>
 </ul>
+<p>CleanSession标志告诉broker客户端是否想要建立一个持久会话。当标志为假时建立持久会话，broker会存储客户端所有的订阅和所有客户端错过的服务质量为1或2的消息。当标志为真时建立非持久会话，broker不会为客户端存储任何信息，并且会删除之前持久会话的所有信息。</p>
+<ul>
+<li>Username/Password</li>
+</ul>
+<p>MQTT可以通过发送用户名和密码来进行认证和授权。然而，如果这些信息没有被加密或者hash处理，密码会被明文传输，我们强烈建议用户名和密码通过安全的方式传输。HiveMQ可以通过SSL认证来鉴定客户端，所以不需要用户名和密码。</p>
 </div>
         
   </div>

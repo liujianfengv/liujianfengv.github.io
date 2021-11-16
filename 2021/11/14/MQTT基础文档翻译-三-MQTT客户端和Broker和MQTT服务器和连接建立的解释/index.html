@@ -100,17 +100,17 @@
         <span title="Created 2021.11.14"><i class="far fa-calendar-alt"></i> 2021.11.14</span>
       </div>
       <div class="post-meta-item updated">
-        <span title="Updated 2021.11.16"><i class="far fa-calendar-check"></i> 2021.11.16</span>
+        <span title="Updated 2021.11.17"><i class="far fa-calendar-check"></i> 2021.11.17</span>
       </div>
      
      
     
      <div class="post-meta-item wordcount">
         
-          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.8k words</span>
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">2.3k words</span>
            
         
-          <i class="far fa-clock"></i> <span class="post-count">6 min</span>
+          <i class="far fa-clock"></i> <span class="post-count">8 min</span>
                                
       </div>
      
@@ -157,6 +157,25 @@
 <li>Username/Password</li>
 </ul>
 <p>MQTT可以通过发送用户名和密码来进行认证和授权。然而，如果这些信息没有被加密或者hash处理，密码会被明文传输，我们强烈建议用户名和密码通过安全的方式传输。HiveMQ可以通过SSL认证来鉴定客户端，所以不需要用户名和密码。</p>
+<ul>
+<li>Will Message</li>
+</ul>
+<p>last will 消息是MQTT Last Will 和 Testament 特性的一部分。这条消息会在客户端非正常关闭时通知其他客户端。当客户端连接上之后，它可以向broker的CONNECT消息中提供last will消息的话题和消息内容。如果客户端非正常关闭，broker会代替客户端发送LWT消息，你可以在系列文章的第九部分了解更多关于LWT的内容。</p>
+<ul>
+<li>KeepAlive</li>
+</ul>
+<p>keep alive 是一个以秒为单位的时间间隔，由客户端在连接建立时指定。这个时间间隔定义了broker和客户端可以忍受没有消息发送的最长时间间隔。 通常，客户端发送常规的PING消息，broker回复PING回复消息。这种方法允许两端都可以判断对方是否仍然在线。系列文章的第十章详细讲述了MQTT的keep alive功能。<br/><br>基本上，这是为了连接MQTT3.1.1客户端连接MQTT broker所需要的全部信息。不同的实现通常会有一些可以配置的附加选项。比如，在某些实现中可以设置存储消息的方法。</p>
+<ul>
+<li>Broker response with a CONNACK message</li>
+</ul>
+<p>当broker收到一条CONNECT消息，他有义务回复一条CONNACK消息。<br /><br>CONNACK消息包含两条内容:</p>
+<ul>
+<li>Session Present flag</li>
+</ul>
+<p>会话状态标志告诉客户端broker是否已经有一个持久会话在与此客户端之前的沟通中建立。当客户端连接时设置Clean Session为真时，session persent flag总是被设置成false，因为这样不会有可用的会话。当客户端连接时设置Clean Session为假时，这里有两种可能，如果此clientId有可以用的会话信息，并且broker存储着会话信息，则session present flag被设为真。否则，如果broker没有任何这个clientId相关的会话信息，session present flag被设置为假。这个标志在MQTT3.1.1中被加入用来帮助客户端判断他们是需要订阅话题或者订阅信息已经被存储在持久会话相关信息中。</p>
+<ul>
+<li>Connect return code<br>CONNACK消息中第二个标志是连接确认标志，这个标志会包含一个结果码，会告诉客户端这次连接请求是否成功。</li>
+</ul>
 </div>
         
   </div>

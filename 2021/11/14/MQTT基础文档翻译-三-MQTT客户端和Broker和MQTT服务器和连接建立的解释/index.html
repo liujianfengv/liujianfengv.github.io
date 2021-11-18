@@ -100,14 +100,14 @@
         <span title="Created 2021.11.14"><i class="far fa-calendar-alt"></i> 2021.11.14</span>
       </div>
       <div class="post-meta-item updated">
-        <span title="Updated 2021.11.17"><i class="far fa-calendar-check"></i> 2021.11.17</span>
+        <span title="Updated 2021.11.18"><i class="far fa-calendar-check"></i> 2021.11.18</span>
       </div>
      
      
     
      <div class="post-meta-item wordcount">
         
-          <i class="fas fa-pencil-alt"></i> <span class="post-count">2.3k words</span>
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">2.5k words</span>
            
         
           <i class="far fa-clock"></i> <span class="post-count">8 min</span>
@@ -174,8 +174,10 @@
 </ul>
 <p>会话状态标志告诉客户端broker是否已经有一个持久会话在与此客户端之前的沟通中建立。当客户端连接时设置Clean Session为真时，session persent flag总是被设置成false，因为这样不会有可用的会话。当客户端连接时设置Clean Session为假时，这里有两种可能，如果此clientId有可以用的会话信息，并且broker存储着会话信息，则session present flag被设为真。否则，如果broker没有任何这个clientId相关的会话信息，session present flag被设置为假。这个标志在MQTT3.1.1中被加入用来帮助客户端判断他们是需要订阅话题或者订阅信息已经被存储在持久会话相关信息中。</p>
 <ul>
-<li>Connect return code<br>CONNACK消息中第二个标志是连接确认标志，这个标志会包含一个结果码，会告诉客户端这次连接请求是否成功。</li>
+<li>Connect return code<br>CONNACK消息中第二个标志是连接确认标志，这个标志会包含一个结果码，会告诉客户端这次连接请求是否成功。<br><img src= "/img/loading.gif" data-src="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/connack1.png"></li>
 </ul>
+<p>返回码定义<br><img src= "/img/loading.gif" data-src="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/retcode.png"><br>更多细节的定义请查阅MQTT文档。</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>你可能想直到MQTT在没有消息发送的时候是如何保持连接的，或者如何知道连接已经失效。不要担心，我们会在后续的文章中讲述相关话题。&lt;br&gt;<br>MQTT系列文章的第三篇文章结束了，希望文章中有可以帮到你的内容，下周我们将会发布关于发布、订阅、取消订阅相关内容的文章。</p>
 </div>
         
   </div>

@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+    <link rel="icon" href="/img/avatar.jpg">
+  
+  
+      <meta name="author" content="Liujianfeng">
+  
+  
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="刘剑峰" type="application/atom+xml">
+  
+
+  
+
+  <title>ProtoBuf为什么比Json快 | 刘剑峰</title>
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/css/style.css" >
+  <link rel="stylesheet" href="/css/partial/dark.css" >
+
+  
+  
+  
+
+  
+    
+      <link rel="stylesheet" href="/css/partial/highlight/atom-one-light.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/a2396837/CDN@latest/css/iconfont.css">
+    
+  
+
+  
+    <script src="/js/todark.js"></script>
+    
+<meta name="generator" content="Hexo 5.4.0"></head>
+</html>
+    
+<div class="nav index" style="height: 60px;">
+    <div class="title animated fadeInDown">
+        <div class="layui-container">
+                <div class="nav-title"><a href="/" title="刘剑峰">刘剑峰</a></div>
+            <div class="nav-list">
+                <button> <span class=""></span><span style="display: block;"></span><span class=""></span> </button>
+                <ul class="layui-nav" lay-filter="">
+                    
+                    
+                        <li class="layui-nav-item" id="btn-toggle-dark">🌙</li>
+                    
+                    <span class="layui-nav-bar" style="left: 342px; top: 78px; width: 0px; opacity: 0;"></span>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<header class="header">
+        
+            <div class="logo">
+                    <a href="/"><img src="/img/avatar.jpg" onerror=this.onerror=null,this.src="/img/loading.gif"></a>
+            </div>
+         
+    </div>
+     
+
+            <div class="motto">
+                <span></span>
+            </div>
+    
+     
+</header>
+
+    
+<article id="post">
+  <div class="post-title">ProtoBuf为什么比Json快</div>
+  
+<div class="post-meta">
+    
+    
+      <div class="post-meta-item date">
+        <span title="Created 2021.12.01"><i class="far fa-calendar-alt"></i> 2021.12.01</span>
+      </div>
+      <div class="post-meta-item updated">
+        <span title="Updated 2021.12.02"><i class="far fa-calendar-check"></i> 2021.12.02</span>
+      </div>
+     
+     
+    
+     <div class="post-meta-item wordcount">
+        
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">398 words</span>
+           
+        
+          <i class="far fa-clock"></i> <span class="post-count">1 min</span>
+                               
+      </div>
+     
+</div>
+
+
+  
+  <div class="content">
+        <div><blockquote>
+<p>Protocol buffers are Google’s language-neutral, platform-neutral, extensible mechanism for serializing structured data – think XML, but smaller, faster, and simpler. </p>
+</blockquote>
+<span id="more"></span>
+<p>Protocol buffers是Google为了序列结构化数据开发的语言无关、平台无关、可拓展的机制。类似XML，但是更小，更快，更简单。</p>
+<blockquote>
+<p>JSON (JavaScript Object Notation) is a lightweight data-interchange format. It is easy for humans to read and write.</p>
+</blockquote>
+<p>JSON是一个易于读写的轻量数据交换格式。</p>
+<h2 id="从一个简单的例子开始"><a href="#从一个简单的例子开始" class="headerlink" title="从一个简单的例子开始"></a>从一个简单的例子开始</h2><p>一份Json数据以及对应的二进制数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;name&quot;:&quot;Mike&quot;,</span><br><span class="line">    &quot;age&quot;:29,</span><br><span class="line">    &quot;sex&quot;:true,</span><br><span class="line">    &quot;phone&quot;:&quot;A123456&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bytes size: 60</span><br><span class="line">7b 22 6e 61 6d 65 22 3a</span><br><span class="line">20 22 4d 69 6b 65 22 2c</span><br><span class="line">20 22 61 67 65 22 3a 20</span><br><span class="line">32 39 2c 20 22 73 65 78</span><br><span class="line">22 3a 20 74 72 75 65 2c</span><br><span class="line">20 22 70 68 6f 6e 65 22</span><br><span class="line">3a 20 22 41 31 32 33 34</span><br><span class="line">35 36 22 7d</span><br></pre></td></tr></table></figure>
+<p>使用类似的.proto定义生成对应的二进制数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">//user.proto</span><br><span class="line">syntax = &quot;proto3&quot;;</span><br><span class="line">message UserInfo &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">  int32 age = 2;</span><br><span class="line">  bool sex = 3;</span><br><span class="line">  string phone = 4;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bytes size: 19</span><br><span class="line">0a 04 4d 69 6b 65 10 1d</span><br><span class="line">18 01 22 07 41 31 32 33</span><br><span class="line">34 35 36</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，在这个例子中，为了传输同样的数据，使用Protobuf生成的数据量是使用Json时的三分之一。Json对应的二进制数据非常简单，每个字符由ASCII码表示，总计60个字符，每个字符一个字节，二进制数据总计60字节。而由protobuf生成的二进制数据就比较难懂了，为什么只用19个字节便可以表示相同的数据了呢？</p>
+<h2 id="Protobuf-编码方式"><a href="#Protobuf-编码方式" class="headerlink" title="Protobuf 编码方式"></a>Protobuf 编码方式</h2><p>内容参考Google的<a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/encoding">官方文档</a></p>
+<h3 id="Varint"><a href="#Varint" class="headerlink" title="Varint"></a>Varint</h3></div>
+        
+  </div>
+
+    <div class="post_tags">
+      
+        <i class="fas fa-tag"></i> <a href="/tags/Protobuf/" class="tag">Protobuf</a>
+      
+    </div>
+    <div class="post-nav">
+      
+      
+        <div class="post-nav-next post-nav-item">
+            <a href="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/" >MQTT基础文档翻译(三):MQTT客户端和Broker和MQTT服务器和连接建立的解释<i class="fa fa-chevron-right"></i></a>
+        </div>
+      
+    </div>
+      
+
+
+
+
+</article>
+
+    
+<a id="gotop" href="javascript:" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    
+
+
+
+
+
+
+    
+<div id="bottom-outer">
+    <div id="bottom-inner">
+        © 2020 <i class="fa fa-heart" id="heart"></i> Liujianfeng 
+        <br>
+        Powered by 
+        <a target="_blank" rel="noopener" href="http://hexo.io">hexo</a> | Theme is <a target="_blank" rel="noopener" href="https://github.com/a2396837/hexo-theme-blank/">white</a>
+        
+          <div class="icp-info">
+            
+          <a href="" target="_blank"> </a>
+        </div>
+        
+    </div>  
+  </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/layui-src@2.5.5/dist/layui.min.js"></script>
+
+
+
+  
+    <script src="/js/script.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script>
+  
+
+ 
+
+
+
+  <script>
+    window.lazyLoadOptions = {
+      elements_selector: 'img',
+      threshold: 0
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script>   
+  
+
+
+  <script>
+    var images = $('img').not('.nav-logo img').not('.card img').not($('a>img')).not('.reward-content img')
+    images.each(function (i, o) {
+      var lazyloadSrc = $(o).attr('data-src') ? $(o).attr('data-src') : $(o).attr('src')
+      $(o).wrap(`<a href="${lazyloadSrc}" data-fancybox="group" data-caption="${$(o).attr('alt')}" class="fancybox"></a>`)
+    })
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script>
+  <script>
+        $().fancybox({
+      selector: '[data-fancybox]',
+      loop: true,
+      transitionEffect: 'slide',
+      protect: true,
+      buttons: ['slideShow', 'fullScreen', 'thumbs', 'close']
+    })
+  </script>   
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script>
+  
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js"></script>
+<script>
+!function (e, t, a) {
+  var initCopyCode = function(){
+    var copyHtml = '';
+    copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+    copyHtml += '  <i class="fa fa-clipboard"></i><span>复制</span>';
+    copyHtml += '</button>';
+    $(".highlight .code pre").before(copyHtml);
+    new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+  }
+  initCopyCode();
+}(window, document);
+</script>  
+  
+
+<script>
+  var btntop = $('#gotop');
+  btntop.on('click', function (e) {
+    e.preventDefault();
+    $('html, body').animate({ scrollTop: 0 }, '300');
+  });
+
+  var $table = $('.content table').not($('figure.highlight > table'))
+$table.each(function () {
+  $(this).wrap('<div class="table-wrap"></div>')
+})
+</script>
+
+
+
+</html>

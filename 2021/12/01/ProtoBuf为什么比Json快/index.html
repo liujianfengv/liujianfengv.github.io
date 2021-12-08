@@ -100,17 +100,17 @@
         <span title="Created 2021.12.01"><i class="far fa-calendar-alt"></i> 2021.12.01</span>
       </div>
       <div class="post-meta-item updated">
-        <span title="Updated 2021.12.02"><i class="far fa-calendar-check"></i> 2021.12.02</span>
+        <span title="Updated 2021.12.09"><i class="far fa-calendar-check"></i> 2021.12.09</span>
       </div>
      
      
     
      <div class="post-meta-item wordcount">
         
-          <i class="fas fa-pencil-alt"></i> <span class="post-count">398 words</span>
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">802 words</span>
            
         
-          <i class="far fa-clock"></i> <span class="post-count">1 min</span>
+          <i class="far fa-clock"></i> <span class="post-count">3 min</span>
                                
       </div>
      
@@ -131,11 +131,18 @@
 <h2 id="从一个简单的例子开始"><a href="#从一个简单的例子开始" class="headerlink" title="从一个简单的例子开始"></a>从一个简单的例子开始</h2><p>一份Json数据以及对应的二进制数据</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;name&quot;:&quot;Mike&quot;,</span><br><span class="line">    &quot;age&quot;:29,</span><br><span class="line">    &quot;sex&quot;:true,</span><br><span class="line">    &quot;phone&quot;:&quot;A123456&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bytes size: 60</span><br><span class="line">7b 22 6e 61 6d 65 22 3a</span><br><span class="line">20 22 4d 69 6b 65 22 2c</span><br><span class="line">20 22 61 67 65 22 3a 20</span><br><span class="line">32 39 2c 20 22 73 65 78</span><br><span class="line">22 3a 20 74 72 75 65 2c</span><br><span class="line">20 22 70 68 6f 6e 65 22</span><br><span class="line">3a 20 22 41 31 32 33 34</span><br><span class="line">35 36 22 7d</span><br></pre></td></tr></table></figure>
 <p>使用类似的.proto定义生成对应的二进制数据</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">//user.proto</span><br><span class="line">syntax = &quot;proto3&quot;;</span><br><span class="line">message UserInfo &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">  int32 age = 2;</span><br><span class="line">  bool sex = 3;</span><br><span class="line">  string phone = 4;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bytes size: 19</span><br><span class="line">0a 04 4d 69 6b 65 10 1d</span><br><span class="line">18 01 22 07 41 31 32 33</span><br><span class="line">34 35 36</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">//user.proto</span><br><span class="line">syntax = &quot;proto3&quot;;</span><br><span class="line">message UserInfo &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">  int32 age = 2;</span><br><span class="line">  bool sex = 3;</span><br><span class="line">  string phone = 4;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//python code snippet</span><br><span class="line">def print_protobuf():</span><br><span class="line">    user = user_pb2.UserInfo()</span><br><span class="line">    user.name = &quot;Mike&quot;</span><br><span class="line">    user.age = 29</span><br><span class="line">    user.sex = True</span><br><span class="line">    user.phone = &quot;A123456&quot;</span><br><span class="line">    print_hex(user.SerializeToString())</span><br><span class="line"></span><br><span class="line">bytes size: 19</span><br><span class="line">0a 04 4d 69 6b 65 10 1d</span><br><span class="line">18 01 22 07 41 31 32 33</span><br><span class="line">34 35 36</span><br></pre></td></tr></table></figure>
 
 <p>可以看到，在这个例子中，为了传输同样的数据，使用Protobuf生成的数据量是使用Json时的三分之一。Json对应的二进制数据非常简单，每个字符由ASCII码表示，总计60个字符，每个字符一个字节，二进制数据总计60字节。而由protobuf生成的二进制数据就比较难懂了，为什么只用19个字节便可以表示相同的数据了呢？</p>
 <h2 id="Protobuf-编码方式"><a href="#Protobuf-编码方式" class="headerlink" title="Protobuf 编码方式"></a>Protobuf 编码方式</h2><p>内容参考Google的<a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/encoding">官方文档</a></p>
-<h3 id="Varint"><a href="#Varint" class="headerlink" title="Varint"></a>Varint</h3></div>
+<h3 id="Varint"><a href="#Varint" class="headerlink" title="Varint"></a>Varint</h3><p>一个unsigned int32类型的变量占用4个字节，可以表示的数字范围是 0 到 2^32 (4,294,967,295)。在实际的场景中，小数字的使用频率是远大于大数字的使用频率的。这样，在存储中就会浪费掉一部分空间。 例如数字255的二进制小端表示中，后三个字节被浪费。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">01111111 00000000 00000000 00000000</span><br><span class="line">         --------------------------</span><br></pre></td></tr></table></figure>
+<p>针对这种情况，提出了一种优化的方案 即varints, varints 是一种用一个或多个字节序列化整型数的方法。可以根据存储数据的大小动态的决定一个整型数占用的空间。 &lt;br &gt;<br>在varint的每一个字节中的最高位被设置为msg(most significant bit)，当msb为1表示下一字节还是属于当前数据，为0则表示当前字节为此数据的最后一个字节。每个字节的低7位用7位一组存储数字的二进制补码， 最低有效组在前，即数据字节为小端序。一些例子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 -&gt; 0 0000001</span><br><span class="line"></span><br><span class="line">255 -&gt; 0 1111111</span><br><span class="line"></span><br><span class="line">256 -&gt; 1 0000000  0 0000001 -&gt; 0000001 0000000 -&gt; 256</span><br><span class="line"></span><br><span class="line">300 -&gt; 1 0101100  0 0000010 -&gt; 0000010 0101100 -&gt; 256 + 32 + 8 + 4 = 300</span><br></pre></td></tr></table></figure>
+<p>这样，当使用一个varint来表示unsigned int32类型整形数时，所占字节数会根据数字大小动态的改变。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0 &lt;= x &lt; (2^8 - 1)       1 bit</span><br><span class="line">2^8 &lt;= x &lt; (2^15 - 1)    2 bit</span><br><span class="line">2^15 &lt;= x &lt; (2^22 - 1)   3 bit</span><br><span class="line">2^22 &lt;= x &lt; (2^29 - 1)   4 bit</span><br><span class="line">2^29 &lt;= x &lt;= (2^32)      5 bit</span><br></pre></td></tr></table></figure>
+
+</div>
         
   </div>
 

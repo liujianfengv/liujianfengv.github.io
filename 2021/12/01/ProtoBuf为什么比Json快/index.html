@@ -100,17 +100,17 @@
         <span title="Created 2021.12.01"><i class="far fa-calendar-alt"></i> 2021.12.01</span>
       </div>
       <div class="post-meta-item updated">
-        <span title="Updated 2021.12.09"><i class="far fa-calendar-check"></i> 2021.12.09</span>
+        <span title="Updated 2021.12.10"><i class="far fa-calendar-check"></i> 2021.12.10</span>
       </div>
      
      
     
      <div class="post-meta-item wordcount">
         
-          <i class="fas fa-pencil-alt"></i> <span class="post-count">802 words</span>
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.4k words</span>
            
         
-          <i class="far fa-clock"></i> <span class="post-count">3 min</span>
+          <i class="far fa-clock"></i> <span class="post-count">5 min</span>
                                
       </div>
      
@@ -137,11 +137,23 @@
 <h2 id="Protobuf-编码方式"><a href="#Protobuf-编码方式" class="headerlink" title="Protobuf 编码方式"></a>Protobuf 编码方式</h2><p>内容参考Google的<a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/encoding">官方文档</a></p>
 <h3 id="Varint"><a href="#Varint" class="headerlink" title="Varint"></a>Varint</h3><p>一个unsigned int32类型的变量占用4个字节，可以表示的数字范围是 0 到 2^32 (4,294,967,295)。在实际的场景中，小数字的使用频率是远大于大数字的使用频率的。这样，在存储中就会浪费掉一部分空间。 例如数字255的二进制小端表示中，后三个字节被浪费。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">01111111 00000000 00000000 00000000</span><br><span class="line">         --------------------------</span><br></pre></td></tr></table></figure>
-<p>针对这种情况，提出了一种优化的方案 即varints, varints 是一种用一个或多个字节序列化整型数的方法。可以根据存储数据的大小动态的决定一个整型数占用的空间。 &lt;br &gt;<br>在varint的每一个字节中的最高位被设置为msg(most significant bit)，当msb为1表示下一字节还是属于当前数据，为0则表示当前字节为此数据的最后一个字节。每个字节的低7位用7位一组存储数字的二进制补码， 最低有效组在前，即数据字节为小端序。一些例子</p>
+<p>针对这种情况，提出了一种优化的方案 即varints, varints 是一种用一个或多个字节序列化整型数的方法。可以根据存储数据的大小动态的决定一个整型数占用的空间。 <br/><br>在varint的每一个字节中的最高位被设置为msg(most significant bit)，当msb为1表示下一字节还是属于当前数据，为0则表示当前字节为此数据的最后一个字节。每个字节的低7位用7位一组存储数字的二进制补码， 最低有效组在前，即数据字节为小端序。一些例子</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 -&gt; 0 0000001</span><br><span class="line"></span><br><span class="line">255 -&gt; 0 1111111</span><br><span class="line"></span><br><span class="line">256 -&gt; 1 0000000  0 0000001 -&gt; 0000001 0000000 -&gt; 256</span><br><span class="line"></span><br><span class="line">300 -&gt; 1 0101100  0 0000010 -&gt; 0000010 0101100 -&gt; 256 + 32 + 8 + 4 = 300</span><br></pre></td></tr></table></figure>
 <p>这样，当使用一个varint来表示unsigned int32类型整形数时，所占字节数会根据数字大小动态的改变。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0 &lt;= x &lt; (2^8 - 1)       1 bit</span><br><span class="line">2^8 &lt;= x &lt; (2^15 - 1)    2 bit</span><br><span class="line">2^15 &lt;= x &lt; (2^22 - 1)   3 bit</span><br><span class="line">2^22 &lt;= x &lt; (2^29 - 1)   4 bit</span><br><span class="line">2^29 &lt;= x &lt;= (2^32)      5 bit</span><br></pre></td></tr></table></figure>
-
+<h3 id="消息结构"><a href="#消息结构" class="headerlink" title="消息结构"></a>消息结构</h3><p>一条protocol buffer消息是一系列的键值对。与Json格式数据的区别是，二进制版protocol buffer数据中使用field’s number来作为key值，而最初定义的key值如需要在解码完成后通过定义文件来确定。&lt;br&gt;<br>当一条消息被编码时，key值和value被整合进字节流中。在protobuf中，key值是一个varint数，其中包含了两部分内容，第一部分是.proto文件中定义的每个key值对应的field number，第二部分是类型信息，用来确定value值的长度。可用的类型有以下几种<br><img src= "/img/loading.gif" data-src="/2021/12/01/ProtoBuf%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94Json%E5%BF%AB/wire_types.png"><br>key值的组织方式为:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(field_number &lt;&lt; 3) | wire_type</span><br><span class="line"></span><br><span class="line">//即最后3bit数代表类型 例如上述例子中protobuf二进制数据的第一个字节0a代表的含义。</span><br><span class="line">0   0001              010</span><br><span class="line">-   ----              ---</span><br><span class="line">msb fieldnumber = 1   type = 2</span><br></pre></td></tr></table></figure>
+<h3 id="Strings"><a href="#Strings" class="headerlink" title="Strings"></a>Strings</h3><p>当一个k-v对的类型字段为2，即(length-delimited)时，在key值之后会紧跟一个varint值，来表示value的长度。</p>
+<h2 id="解析数据"><a href="#解析数据" class="headerlink" title="解析数据"></a>解析数据</h2><p>现在我们回头来看例子中产生的二进制数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">0a 04 4d 69 6b 65</span><br><span class="line">0 0001 010 -&gt; field = 1, type = 2</span><br><span class="line">04 -&gt; value length = 4</span><br><span class="line">4d -&gt; M</span><br><span class="line">69 -&gt; i</span><br><span class="line">6b -&gt; k</span><br><span class="line">65 -&gt; e</span><br><span class="line"></span><br><span class="line">10 1d </span><br><span class="line">0 0010 000 -&gt; field = 2, type = 0</span><br><span class="line">00011101  -&gt; 29</span><br><span class="line"></span><br><span class="line">18 01</span><br><span class="line">0 0011 000 -&gt; field = 3, type = 0</span><br><span class="line">01 -&gt; true</span><br><span class="line"></span><br><span class="line">22 07 41 31 32 33 34 35 36</span><br><span class="line">0 0100 010 -&gt; field = 4, type = 2</span><br><span class="line">07 -&gt; value length = 7</span><br><span class="line">41 31 32 33 34 35 36 -&gt; &quot;A123456&quot;</span><br></pre></td></tr></table></figure>
+<p>到此，便可以理解这个简单例子中protobuf的二进制数据是如何组织的了。对于题目提出的问题，也有了一个初步的回答。</p>
+<ul>
+<li>使用varint类型，在使用较小数字更频繁的场景中，更加节省空间。Json中数字按字符串存储，有多少位数就要占用多少bit空间，如例子中 29 被存储为 32 39。示例中节省1字节。</li>
+<li>bool类型值占用1字节。示例中节省3字节。</li>
+<li>不需要存储类似 ‘{‘ ‘“‘ ‘}’ ‘ ‘ 等冗余的字符。例子中json总计有28个冗余字符。</li>
+<li>key值为一个varint类型数，通常只占1个字节。例子中protobuf二进制数据 key值总计6字节，json中15字节。</li>
+<li>60(json bytes size) - 19(protobuf bytes size) = 1 + 3 + 28 + (15 - 6)</li>
+</ul>
 </div>
         
   </div>

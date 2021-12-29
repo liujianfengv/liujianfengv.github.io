@@ -100,17 +100,17 @@
         <span title="Created 2021.12.01"><i class="far fa-calendar-alt"></i> 2021.12.01</span>
       </div>
       <div class="post-meta-item updated">
-        <span title="Updated 2021.12.10"><i class="far fa-calendar-check"></i> 2021.12.10</span>
+        <span title="Updated 2021.12.30"><i class="far fa-calendar-check"></i> 2021.12.30</span>
       </div>
      
      
     
      <div class="post-meta-item wordcount">
         
-          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.4k words</span>
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.6k words</span>
            
         
-          <i class="far fa-clock"></i> <span class="post-count">5 min</span>
+          <i class="far fa-clock"></i> <span class="post-count">6 min</span>
                                
       </div>
      
@@ -145,7 +145,7 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">(field_number &lt;&lt; 3) | wire_type</span><br><span class="line"></span><br><span class="line">//即最后3bit数代表类型 例如上述例子中protobuf二进制数据的第一个字节0a代表的含义:</span><br><span class="line">0   0001              010</span><br><span class="line">-   ----              ---</span><br><span class="line">msb fieldnumber = 1   type = 2</span><br></pre></td></tr></table></figure>
 <h3 id="Strings"><a href="#Strings" class="headerlink" title="Strings"></a>Strings</h3><p>当一个k-v对的类型字段为2，即(length-delimited)时，在key值之后会紧跟一个varint值，来表示value的长度。</p>
 <h2 id="解析数据"><a href="#解析数据" class="headerlink" title="解析数据"></a>解析数据</h2><p>现在我们回头来看例子中产生的二进制数据</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0a 04 4d 69 6b 65</span><br><span class="line">0 0001 010 -&gt; field = 1, type = 2</span><br><span class="line">04 -&gt; value length = 4</span><br><span class="line">4d -&gt; M</span><br><span class="line">69 -&gt; i</span><br><span class="line">6b -&gt; k</span><br><span class="line">65 -&gt; e</span><br><span class="line"></span><br><span class="line">10 1d </span><br><span class="line">0 0010 000 -&gt; field = 2, type = 0</span><br><span class="line">00011101  -&gt; 29</span><br><span class="line"></span><br><span class="line">18 01</span><br><span class="line">0 0011 000 -&gt; field = 3, type = 0</span><br><span class="line">01 -&gt; true</span><br><span class="line"></span><br><span class="line">22 07 41 31 32 33 34 35 36</span><br><span class="line">0 0100 010 -&gt; field = 4, type = 2</span><br><span class="line">07 -&gt; value length = 7</span><br><span class="line">41 31 32 33 34 35 36 -&gt; &quot;A123456&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0a 04 4d 69 6b 65</span><br><span class="line">0a -&gt; 0 0001 010 -&gt; field = 1, type = 2</span><br><span class="line">04 -&gt; value length = 4</span><br><span class="line">4d -&gt; M</span><br><span class="line">69 -&gt; i</span><br><span class="line">6b -&gt; k</span><br><span class="line">65 -&gt; e</span><br><span class="line"></span><br><span class="line">10 1d </span><br><span class="line">0 0010 000 -&gt; field = 2, type = 0</span><br><span class="line">00011101  -&gt; 29</span><br><span class="line"></span><br><span class="line">18 01</span><br><span class="line">0 0011 000 -&gt; field = 3, type = 0</span><br><span class="line">01 -&gt; true</span><br><span class="line"></span><br><span class="line">22 07 41 31 32 33 34 35 36</span><br><span class="line">0 0100 010 -&gt; field = 4, type = 2</span><br><span class="line">07 -&gt; value length = 7</span><br><span class="line">41 31 32 33 34 35 36 -&gt; &quot;A123456&quot;</span><br></pre></td></tr></table></figure>
 <p>到此，便可以理解这个简单例子中protobuf的二进制数据是如何组织的了。对于题目提出的问题，也有了一个初步的回答。</p>
 <ul>
 <li>使用varint类型，在使用较小数字更频繁的场景中，更加节省空间。Json中数字按字符串存储，有多少位数就要占用多少bit空间，如例子中 29 被存储为 32 39。示例中节省1字节。</li>
@@ -154,6 +154,10 @@
 <li>key值为一个varint类型数，通常只占1个字节。例子中Protobuf二进制数据 key值总计6字节，json中15字节。</li>
 <li>60(json bytes size) - 19(protobuf bytes size) = 1 + 3 + 28 + (15 - 6)</li>
 </ul>
+<h2 id="初探protobuf源码"><a href="#初探protobuf源码" class="headerlink" title="初探protobuf源码"></a>初探protobuf源码</h2><p>如果有用过protobuf的话，一定对protoc不陌生。他是protocol编译器，用来编译含有消息定义的.proto文件。这个编译器提供一个很有意思的功能</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ protoc | grep decode_raw -A4</span><br><span class="line">  --decode_raw                Read an arbitrary protocol message from</span><br><span class="line">                              standard input and write the raw tag/value</span><br><span class="line">                              pairs in text format to standard output.  No</span><br><span class="line">                              PROTO_FILES should be given when using this</span><br><span class="line">                              flag.</span><br></pre></td></tr></table></figure>
+<p>即在不需要.proto定义文件的情况下，从标准输入读取任意的protocol消息，然后把他们以 tag/value 的文字格式打印到标准输出。后续内容都围绕这个功能来展开。</p>
+<h3 id="编译protobuf"><a href="#编译protobuf" class="headerlink" title="编译protobuf"></a>编译protobuf</h3><p>想要看源码的第一步呢，肯定是下载到源码，然后把他跑起来。本来已经做好了遇到各种坑的准备，没想到进展的异常顺利，一步到位。全程按照<a target="_blank" rel="noopener" href="https://github.com/protocolbuffers/protobuf/tree/master/cmake">构建文档</a>来,得到一个有源码,可调试的protoc程序。<br><img src= "/img/loading.gif" data-src="/2021/12/01/ProtoBuf%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94Json%E5%BF%AB/debug_protoc.png"></p>
 </div>
         
   </div>

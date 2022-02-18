@@ -113,17 +113,17 @@ ga('send', 'pageview');
         <span title="Created 2022.02.17"><i class="far fa-calendar-alt"></i> 2022.02.17</span>
       </div>
       <div class="post-meta-item updated">
-        <span title="Updated 2022.02.17"><i class="far fa-calendar-check"></i> 2022.02.17</span>
+        <span title="Updated 2022.02.18"><i class="far fa-calendar-check"></i> 2022.02.18</span>
       </div>
      
      
     
      <div class="post-meta-item wordcount">
         
-          <i class="fas fa-pencil-alt"></i> <span class="post-count">924 words</span>
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.8k words</span>
            
         
-          <i class="far fa-clock"></i> <span class="post-count">3 min</span>
+          <i class="far fa-clock"></i> <span class="post-count">6 min</span>
                                
       </div>
      
@@ -162,6 +162,46 @@ ga('send', 'pageview');
 </ul>
 <p>这个标志表示这条消息是一个因为目标接受者没有确认原始消息而重传的复制数据。这个标志只有在 Qos 大于0时生效。通常，复制和重传的机制被MQTT客户端库或者broker实现。更多相关消息请看第六章。 <br/><br>当一个客户端向MQTT broker发布一条消息。broker读取并确认消息(取决于Qos级别)，然后处理消息。处理的过程包括确认哪些客户端订阅了当前主题，并将消息发送给他们。<br><img src= "/img/loading.gif" data-src="/2022/02/17/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E5%9B%9B-%E5%8F%91%E5%B8%83%E3%80%81%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/publish_flow.png"></p>
 <p>客户端发布消息时只关心将消息发送给broker的过程。当broker接收到被发布的消息，由broker负责将消息传递给所有的订阅者。发布消息的客户端不会知道是否有其他客户端对这条消息感兴趣，也不会知道有多少客户端从broker收到了这条消息。</p>
+<h3 id="订阅-Subscribe"><a href="#订阅-Subscribe" class="headerlink" title="订阅(Subscribe)"></a>订阅(Subscribe)</h3><p>在没有任何人订阅(即没有任何客户端订阅相关话题)的情况下发布消息是无意义的。客户端通过发送一条订阅消息给broker来接收感兴趣的消息。订阅消息的格式非常简单，包含了一个唯一数据包ID和一个订阅话题列表。<br><img src= "/img/loading.gif" data-src="/2022/02/17/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E5%9B%9B-%E5%8F%91%E5%B8%83%E3%80%81%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/subscribe_packet.png"></p>
+<ul>
+<li>Packet Identifier</li>
+</ul>
+<p>数据包ID是客户端和broker之间消息的唯一识别码。客户端程序库或者broker负责设置这个MQTT内部的识别ID。</p>
+<ul>
+<li>List of Subscriptions</li>
+</ul>
+<p>一条订阅消息可以包含多条订阅。每条订阅由Topic和Qos级别组成。订阅消息中的Topic可以包含通配符，这样可以匹配一类Topic而不是某个特定的Topic。如果某个客户端重复订阅了一个Topic，broker会按照其中Qos级别最高的一条来处理对应的消息。</p>
+<h3 id="Suback"><a href="#Suback" class="headerlink" title="Suback"></a>Suback</h3><p>为了确认每一条订阅消息，broker会回复一个SUBACK消息给客户端。这条消息包含着对应的订阅消息的数据包ID，和一系列的返回码。<br><img src= "/img/loading.gif" data-src="/2022/02/17/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E5%9B%9B-%E5%8F%91%E5%B8%83%E3%80%81%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/suback_packet.png"></p>
+<ul>
+<li>Packet Identifier</li>
+</ul>
+<p>数据包ID是客户端和broker之间消息的唯一识别码。和订阅消息中的ID一致。</p>
+<ul>
+<li>Return Code</li>
+</ul>
+<p>broker为在订阅消息中收到的每一个 Topic/Qos 对返回一个结果码。 例如，如果订阅消息包含5个订阅，则SUBACK消息包含5个结果码。结果码确认每一个Topic并且返回被broker使用的Qos级别。如果broker拒绝了某个订阅，SUBACK消息会包含一个代表失败的结果码给对应的订阅。例如客户端没有足够的权限去订阅某个Topic。</p>
+<p><img src= "/img/loading.gif" data-src="/2022/02/17/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E5%9B%9B-%E5%8F%91%E5%B8%83%E3%80%81%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/return_code.png"></p>
+<p><img src= "/img/loading.gif" data-src="/2022/02/17/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E5%9B%9B-%E5%8F%91%E5%B8%83%E3%80%81%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/subscribe_flow.png"></p>
+<p>在客户端成功的发送一条SUBSCRIBE消息，并且收到SUBACK消息之后。客户端会收到被订阅的话题下的每一条消息。</p>
+<h3 id="取消订阅-Unsubscribe"><a href="#取消订阅-Unsubscribe" class="headerlink" title="取消订阅(Unsubscribe)"></a>取消订阅(Unsubscribe)</h3><p>和订阅(Subscribe)消息对应的是取消订阅(Unsubscribe)消息。这条消息为客户端删除一个订阅。取消订阅消息和订阅消息类似，包含一个数据包ID和一系列Topic。</p>
+<p><img src= "/img/loading.gif" data-src="/2022/02/17/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E5%9B%9B-%E5%8F%91%E5%B8%83%E3%80%81%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/unsubscribe_packet.png"></p>
+<ul>
+<li>Packet Identifier</li>
+</ul>
+<p>数据包ID是客户端和broker之间消息的唯一识别码。客户端程序库或者broker负责设置这个MQTT内部的识别ID。</p>
+<ul>
+<li>List of Topic</li>
+</ul>
+<p>话题列表可以包含多个客户端想要取消订阅的Topic。只需要发送Topic，不需要Qos。broker不管当前Topic属于什么Qos级别，都会为客户端取消对某个Topic的订阅。</p>
+<h3 id="Unsunack"><a href="#Unsunack" class="headerlink" title="Unsunack"></a>Unsunack</h3><p>为了确认取消订阅消息，broker会发送一个UNSUBACK的确认消息给客户端。这条消息只包含着取消订阅消息的数据包ID(为了明确当前消息对应的取消订阅消息)。</p>
+<p><img src= "/img/loading.gif" data-src="/2022/02/17/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E5%9B%9B-%E5%8F%91%E5%B8%83%E3%80%81%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/unsuback_packet.png"></p>
+<ul>
+<li>Packet Identifier </li>
+</ul>
+<p>数据包ID是客户端和broker之间消息的唯一识别码。之前提到过，这个ID和UNSUBSCRIBE消息中的ID相等。</p>
+<p><img src= "/img/loading.gif" data-src="/2022/02/17/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E5%9B%9B-%E5%8F%91%E5%B8%83%E3%80%81%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/unsubscribe_flow.png"></p>
+<p>当客户端从broker收到UNSUBACK消息后，客户端可以认为在UNSUBSCRIBE消息中包含的订阅已经被删除了。</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>第四章的内容已经结束了，希望你有所收获。在下一章中我们将深入了解MQTT Topic的使用方法。 包括Topic的基础知识、如何使用通配符，并且会提供大量的例子。</p>
 </div>
         
   </div>

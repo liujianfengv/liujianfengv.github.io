@@ -22,7 +22,7 @@
 
   
 
-  <title>Tags: MQTT | 刘剑峰</title>
+  <title>MQTT基础文档翻译(五):话题和相关的最佳实践 | 刘剑峰</title>
 
   
 <!-- Google Analytics -->
@@ -103,69 +103,64 @@ ga('send', 'pageview');
 </header>
 
     
-<div class="post-wrap archive">
+<article id="post">
+  <div class="post-title">MQTT基础文档翻译(五):话题和相关的最佳实践</div>
+  
+<div class="post-meta">
     
     
-        
-        
-        <div class="yearzodiac">
-                <div class="years">
-                  <h1>2022  <i class="symbolic-animals icon-tiger"></i></h1>
-                </div>
-        </div>
-        
-        <li class="archive-item">
-            <a class="archive-item-link" href="/2022/02/27/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%BA%94-%E8%AF%9D%E9%A2%98%E5%92%8C%E7%9B%B8%E5%85%B3%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">MQTT基础文档翻译(五):话题和相关的最佳实践</a>
-            <span class="archive-item-date">2022-02-27</span>
-        </li>
+      <div class="post-meta-item date">
+        <span title="Created 2022.02.27"><i class="far fa-calendar-alt"></i> 2022.02.27</span>
+      </div>
+      <div class="post-meta-item updated">
+        <span title="Updated 2022.02.28"><i class="far fa-calendar-check"></i> 2022.02.28</span>
+      </div>
+     
+     
     
+     <div class="post-meta-item wordcount">
         
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">330 words</span>
+           
         
-        <li class="archive-item">
-            <a class="archive-item-link" href="/2022/02/17/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E5%9B%9B-%E5%8F%91%E5%B8%83%E3%80%81%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/">MQTT基础文档翻译(四):发布、订阅和取消订阅</a>
-            <span class="archive-item-date">2022-02-17</span>
-        </li>
-    
-        
-        
-        <div class="yearzodiac">
-                <div class="years">
-                  <h1>2021  <i class="symbolic-animals icon-ox"></i></h1>
-                </div>
-        </div>
-        
-        <li class="archive-item">
-            <a class="archive-item-link" href="/2021/11/14/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%89-MQTT%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8CBroker%E5%92%8CMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E7%9A%84%E8%A7%A3%E9%87%8A/">MQTT基础文档翻译(三):MQTT客户端和Broker和MQTT服务器和连接建立的解释</a>
-            <span class="archive-item-date">2021-11-14</span>
-        </li>
-    
-        
-        
-        <li class="archive-item">
-            <a class="archive-item-link" href="/2021/11/10/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%BA%8C-%E5%8F%91%E5%B8%83%E5%92%8C%E8%AE%A2%E9%98%85/">MQTT基础文档翻译(二):发布和订阅</a>
-            <span class="archive-item-date">2021-11-10</span>
-        </li>
-    
-        
-        
-        <li class="archive-item">
-            <a class="archive-item-link" href="/2021/11/08/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%80-MQTT%E5%8D%8F%E8%AE%AE%E4%BB%8B%E7%BB%8D/">MQTT基础文档翻译(一):MQTT协议介绍</a>
-            <span class="archive-item-date">2021-11-08</span>
-        </li>
-    
-    <div class="arc_pag">
-       <nav class="paginator">
-      
-            
-</nav>
-
-     </div>
+          <i class="far fa-clock"></i> <span class="post-count">1 min</span>
+                               
+      </div>
+     
 </div>
 
 
+  
+  <div class="content">
+        <div><h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://www.hivemq.com/blog/mqtt-essentials-part-5-mqtt-topics-best-practices/">MQTT Topics &amp; Best Practices - MQTT Essentials: Part 5</a><span id="more"></span></p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>欢迎来到关于MQTT核心特性和概念系列文章的第五篇。在这篇文章中，我们将专注于MQTT的话题和相关的最佳实践。正如我们之前提到的，MQTT的broker通过消息中的Topic信息来决定哪一个客户端将收到消息。我们还将看到一些特殊的系统话题，这些话题代表了一些关于broker状态的Topic。</p>
+<h3 id="Topic"><a href="#Topic" class="headerlink" title="Topic"></a>Topic</h3><p>在MQTT中，Topic代表一个被broker用来为每个已连接的客户端筛选消息的UTF-8字符串。topic由一级或多级组成。每一级之间通过正斜杠来划分。<br><img src= "/img/loading.gif" data-src="/2022/02/27/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%BA%94-%E8%AF%9D%E9%A2%98%E5%92%8C%E7%9B%B8%E5%85%B3%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/topic_basics.png"></p>
+<p>和消息队列相比，MQTT话题是非常轻量的。客户端在发布或订阅一条消息之前，不需要提前创建一个话题。broker会在没有任何初始化的情况下接受所有正确的topic。<br/><br>这里有一些topic的例子:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">myhome/groundfloor/livingroom/temperature</span><br><span class="line">USA/California/San Francisco/Silicon Valley</span><br><span class="line">5ff4a2ce-e485-40f4-826c-b1a5d81be9b6/status</span><br><span class="line">Germany/Bavaria/car/2382340923453/latitude</span><br></pre></td></tr></table></figure>
+<p>注意，每个topic必须含有至少一个字符，并且topic字符串允许空字符串。 Topic 是大小写敏感的。例如 myhome/temperature 和 MyHome/Temperature 是两个不同的topic。另外，单一的正斜杠是一个合法的topic。</p>
+</div>
+        
+  </div>
+
+    <div class="post_tags">
+      
+        <i class="fas fa-tag"></i> <a href="/tags/MQTT/" class="tag">MQTT</a>
+      
+    </div>
+    <div class="post-nav">
+      
+      
+        <div class="post-nav-next post-nav-item">
+            <a href="/2022/02/17/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E5%9B%9B-%E5%8F%91%E5%B8%83%E3%80%81%E8%AE%A2%E9%98%85%E5%92%8C%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/" >MQTT基础文档翻译(四):发布、订阅和取消订阅<i class="fa fa-chevron-right"></i></a>
+        </div>
+      
+    </div>
+      
 
 
 
+
+</article>
 
     
 <a id="gotop" href="javascript:" title="返回顶部"><i class="fa fa-arrow-up"></i></a>

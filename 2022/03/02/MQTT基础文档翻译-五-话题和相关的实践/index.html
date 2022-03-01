@@ -22,7 +22,7 @@
 
   
 
-  <title>MQTT基础文档翻译(五):Topic和相关的最佳实践 | 刘剑峰</title>
+  <title>MQTT基础文档翻译(五):话题和相关的实践 | 刘剑峰</title>
 
   
 <!-- Google Analytics -->
@@ -104,16 +104,16 @@ ga('send', 'pageview');
 
     
 <article id="post">
-  <div class="post-title">MQTT基础文档翻译(五):Topic和相关的最佳实践</div>
+  <div class="post-title">MQTT基础文档翻译(五):话题和相关的实践</div>
   
 <div class="post-meta">
     
     
       <div class="post-meta-item date">
-        <span title="Created 2022.02.27"><i class="far fa-calendar-alt"></i> 2022.02.27</span>
+        <span title="Created 2022.03.02"><i class="far fa-calendar-alt"></i> 2022.03.02</span>
       </div>
       <div class="post-meta-item updated">
-        <span title="Updated 2022.03.01"><i class="far fa-calendar-check"></i> 2022.03.01</span>
+        <span title="Updated 2022.03.02"><i class="far fa-calendar-check"></i> 2022.03.02</span>
       </div>
      
      
@@ -134,14 +134,14 @@ ga('send', 'pageview');
   <div class="content">
         <div><h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://www.hivemq.com/blog/mqtt-essentials-part-5-mqtt-Topics-best-practices/">MQTT Topics &amp; Best Practices - MQTT Essentials: Part 5</a><span id="more"></span></p>
 <h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>欢迎来到关于MQTT核心特性和概念系列文章的第五篇。在这篇文章中，我们将专注于MQTT的Topic和相关的最佳实践。正如我们之前提到的，MQTT的broker通过消息中的Topic信息来决定哪一个客户端将收到消息。我们还将看到一些特殊的系统Topic，这些Topic代表了一些关于broker状态的Topic。</p>
-<h3 id="Topic"><a href="#Topic" class="headerlink" title="Topic"></a>Topic</h3><p>在MQTT中，Topic代表一个被broker用来为每个已连接的客户端筛选消息的UTF-8字符串。Topic由一级或多级组成。每一级之间通过正斜杠来划分。<br><img src= "/img/loading.gif" data-src="/Topic_basics.png"></p>
+<h3 id="Topic"><a href="#Topic" class="headerlink" title="Topic"></a>Topic</h3><p>在MQTT中，Topic代表一个被broker用来为每个已连接的客户端筛选消息的UTF-8字符串。Topic由一级或多级组成。每一级之间通过正斜杠来划分。<br><img src= "/img/loading.gif" data-src="/2022/03/02/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%BA%94-%E8%AF%9D%E9%A2%98%E5%92%8C%E7%9B%B8%E5%85%B3%E7%9A%84%E5%AE%9E%E8%B7%B5/topic_basics.png"></p>
 <p>和消息队列相比，MQTTTopic是非常轻量的。客户端在发布或订阅一条消息之前，不需要提前创建一个Topic。broker会在没有任何初始化的情况下接受所有正确的Topic。<br/><br>这里有一些Topic的例子:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">myhome/groundfloor/livingroom/temperature</span><br><span class="line">USA/California/San Francisco/Silicon Valley</span><br><span class="line">5ff4a2ce-e485-40f4-826c-b1a5d81be9b6/status</span><br><span class="line">Germany/Bavaria/car/2382340923453/latitude</span><br></pre></td></tr></table></figure>
 <p>注意，每个Topic必须含有至少一个字符，并且Topic字符串允许空字符串。 Topic 是大小写敏感的。例如 myhome/temperature 和 MyHome/Temperature 是两个不同的Topic。另外，单一的正斜杠是一个合法的Topic。</p>
 <h3 id="通配符"><a href="#通配符" class="headerlink" title="通配符"></a>通配符</h3><p>当一个客户端订阅一个Topic，它可以精确的订阅一个Topic，也可以通过通配符同时订阅多个Topic。通配符只可以被用于订阅Topic，不可以用于发布消息。这里有两种不同的通配符:单层和多层。</p>
-<h4 id="单层通配符"><a href="#单层通配符" class="headerlink" title="单层通配符: +"></a>单层通配符: +</h4><p>正如名字所表示的含义，一个单层通配符可以替换一级Topic。在Topic的字符串中，加号代表着一个单层通配符。<br><img src= "/img/loading.gif" data-src="/Topic_wildcard_plus.png"></p>
-<p>当Topic的某一级为通配符时，在这一级有任何字符串都可以被匹配。例如 一条形如 myhome/groundfloor/+/temperature 的订阅消息对一下的Topic会产生不同的结果:<br><img src= "/img/loading.gif" data-src="/Topic_wildcard_plus_example.png"></p>
-<h4 id="多层通配符"><a href="#多层通配符" class="headerlink" title="多层通配符:"></a>多层通配符:</h4><p>多层通配符可以覆盖Topic中多层字符，’#’符号在Topic字符串中代表一个多层通配符。为了让broker可以确定哪些Topic可以被匹配，多层通配符必须是Topic字符串的字符，并且倒数第二个字符为正斜杠。<br><img src= "/img/loading.gif" data-src="/Topic_wildcard_hash.png"></p>
+<h4 id="单层通配符"><a href="#单层通配符" class="headerlink" title="单层通配符: +"></a>单层通配符: +</h4><p>正如名字所表示的含义，一个单层通配符可以替换一级Topic。在Topic的字符串中，加号代表着一个单层通配符。<br><img src= "/img/loading.gif" data-src="/2022/03/02/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%BA%94-%E8%AF%9D%E9%A2%98%E5%92%8C%E7%9B%B8%E5%85%B3%E7%9A%84%E5%AE%9E%E8%B7%B5/topic_wildcard_plus.png"></p>
+<p>当Topic的某一级为通配符时，在这一级有任何字符串都可以被匹配。例如 一条形如 myhome/groundfloor/+/temperature 的订阅消息对一下的Topic会产生不同的结果:<br><img src= "/img/loading.gif" data-src="/2022/03/02/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%BA%94-%E8%AF%9D%E9%A2%98%E5%92%8C%E7%9B%B8%E5%85%B3%E7%9A%84%E5%AE%9E%E8%B7%B5/topic_wildcard_plus_example.png"></p>
+<h4 id="多层通配符"><a href="#多层通配符" class="headerlink" title="多层通配符:"></a>多层通配符:</h4><p>多层通配符可以覆盖Topic中多层字符，’#’符号在Topic字符串中代表一个多层通配符。为了让broker可以确定哪些Topic可以被匹配，多层通配符必须是Topic字符串的字符，并且倒数第二个字符为正斜杠。<br><img src= "/img/loading.gif" data-src="/2022/03/02/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%BA%94-%E8%AF%9D%E9%A2%98%E5%92%8C%E7%9B%B8%E5%85%B3%E7%9A%84%E5%AE%9E%E8%B7%B5/topic_wildcard_hash.png"></p>
 <p>当一个客户端使用多层通配符订阅Topic，它将会收到以通配符之前字符串开头的所有消息，不管这条消息有多长。如果你只把 ‘#’ 符号作为一条Topic。你会收到所有发往MQTT broker的消息。如果你想要高吞吐量，就不应该只使用一个’#’作为Topic。</p>
 <h3 id="以-‘-’-符号开头的话题"><a href="#以-‘-’-符号开头的话题" class="headerlink" title="以 ‘$’ 符号开头的话题"></a>以 ‘$’ 符号开头的话题</h3><p>一般来说，你可以给MQTT Topic任意的名字。但是，这有一个例外， 以’$‘符号开头的Topic被borker保留用来做内部的计数。客户端不可以给这些话题推送消息。同时，这些Topic没有被官方标准化。通常 $SYS/ 被用于代表以下消息，但不同的实现可以能有不同的意义。 <a target="_blank" rel="noopener" href="https://github.com/mqtt/mqtt.org/wiki/SYS-Topics">MQTT GitHub Wiki</a>中有$SYS 相关Topic的建议。这里有一些例子:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$SYS/broker/clients/connected</span><br><span class="line">$SYS/broker/clients/disconnected</span><br><span class="line">$SYS/broker/clients/total</span><br><span class="line">$SYS/broker/messages/sent</span><br><span class="line">$SYS/broker/uptime</span><br></pre></td></tr></table></figure>

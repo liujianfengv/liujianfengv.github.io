@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+    <link rel="icon" href="/img/avatar.jpg">
+  
+  
+      <meta name="author" content="Liujianfeng">
+  
+  
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="刘剑峰(stranded1996@gmail.com)" type="application/atom+xml">
+  
+
+  
+
+  <title>MQTT基础文档翻译(一):MQTT协议介绍 | 刘剑峰(stranded1996@gmail.com)</title>
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-216816473-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+
+  
+
+  <link rel="stylesheet" href="/css/style.css" >
+  <link rel="stylesheet" href="/css/partial/dark.css" >
+
+  
+  
+  
+
+  
+    
+      <link rel="stylesheet" href="/css/partial/highlight/atom-one-light.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/a2396837/CDN@latest/css/iconfont.css">
+    
+  
+
+  
+    <script src="/js/todark.js"></script>
+    
+<meta name="generator" content="Hexo 5.4.0"></head>
+</html>
+    
+<div class="nav index" style="height: 60px;">
+    <div class="title animated fadeInDown">
+        <div class="layui-container">
+                <div class="nav-title"><a href="/" title="刘剑峰(stranded1996@gmail.com)">刘剑峰(stranded1996@gmail.com)</a></div>
+            <div class="nav-list">
+                <button> <span class=""></span><span style="display: block;"></span><span class=""></span> </button>
+                <ul class="layui-nav" lay-filter="">
+                    
+                    
+                        <li class="layui-nav-item" id="btn-toggle-dark">🌙</li>
+                    
+                    <span class="layui-nav-bar" style="left: 342px; top: 78px; width: 0px; opacity: 0;"></span>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<header class="header">
+        
+            <div class="logo">
+                    <a href="/"><img src="/img/avatar.jpg" onerror=this.onerror=null,this.src="/img/loading.gif"></a>
+            </div>
+         
+    </div>
+     
+
+            <div class="motto">
+                <span></span>
+            </div>
+    
+     
+</header>
+
+    
+<article id="post">
+  <div class="post-title">MQTT基础文档翻译(一):MQTT协议介绍</div>
+  
+<div class="post-meta">
+    
+    
+      <div class="post-meta-item date">
+        <span title="Created 2021.11.08"><i class="far fa-calendar-alt"></i> 2021.11.08</span>
+      </div>
+      <div class="post-meta-item updated">
+        <span title="Updated 2021.11.13"><i class="far fa-calendar-check"></i> 2021.11.13</span>
+      </div>
+     
+     
+    
+     <div class="post-meta-item wordcount">
+        
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">1.7k words</span>
+           
+        
+          <i class="far fa-clock"></i> <span class="post-count">5 min</span>
+                               
+      </div>
+     
+</div>
+
+
+  
+  <div class="content">
+        <div><h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://www.hivemq.com/blog/mqtt-essentials-part-1-introducing-mqtt/">Introducing the MQTT Protocol - MQTT Essentials: Part 1</a></p>
+<span id="more"></span>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>欢迎阅读MQTT系列文章: 一个讲述MQTT协议核心特性和概念的系列博客，分为十个部分。这一篇博客概述了我们计划覆盖的内容，为你快速介绍MQTT，并提供一些关于这个协议有趣的背景故事。</p>
+<h3 id="周一与MQTT见面"><a href="#周一与MQTT见面" class="headerlink" title="周一与MQTT见面!"></a>周一与MQTT见面!</h3><p>一年的初始是开启一件新事物的绝好时机。本着这种精神，我们正一步步完善我们的博客去覆盖更广的关于MQTT的话题。这些新的系列文章会对安全性和客户端程序库有深入的讲解，这里有许多很棒的内容可以帮助到你。每周一我们将会发布一篇新的关于MQTT的博客。所以，如果你对MQTT感兴趣，请定期查阅我们的博客。更好的方式是，订阅我们的简讯，然后就可以在博客发布的第一时间在邮箱中收到通知。<br/><br>我们希望这些文章可以让你快速、成功的明白和实现MQTT <br/><br>在这篇文章的末尾，我们有一个视频对这篇博客做补充，我们建议你阅读本文，并通过视频获取更多信息。</p>
+<h3 id="MQTT要点-为什么，是什么，什么不是"><a href="#MQTT要点-为什么，是什么，什么不是" class="headerlink" title="MQTT要点: 为什么，是什么，什么不是"></a>MQTT要点: 为什么，是什么，什么不是</h3><p>在我们进入今天的话题之前，先来解释以下为什么我们写这系列文章，这篇文章的受众是谁，还有在接下来的日子我们将覆盖哪些内容。HiveMQ团队长期做MQTT相关的工作。我们的专家每天在会议和网络上为客户回答关于MQTT核心概念的问题。这些问题关于 publish/subscribe，quality of services，和其他话题。 在MQTT系列文章中，我们希望去解释MQTT的主要概念并为用户提供一个简单易懂的参考指南。MQTT是一个开源的协议，我们认为如何使用MQTT的信息也应该开源。我们对于这项技术感到非常兴奋，也希望你可以从内容中获得帮助 <br /><br>首先我们将探讨基础概念(publish/subscribe，client/broker)和MQTT的基础功能(Connect,Publish,Subscribe)。接下来，我们将关注一些特性: Quality of Service, Retained Messages, Persistent Session,Last Will 和 Testament, Keep Alive和其他。 <br /><br>在系列文章中不会包含安全相关信息，安全性是MQTT一个很大的话题。事实上，他是一个特别重要的话题，我们发布了另一个系列文章来讲述MQTT安全相关的内容。</p>
+<h3 id="介绍MQTT"><a href="#介绍MQTT" class="headerlink" title="介绍MQTT"></a>介绍MQTT</h3><p>“MQTT是一个客户端服务器，发布订阅模型的消息传输协议。它轻量级、开源、简单、易实现，这些特性使其成为许多情况下使用的理想选择，包括机器到机器通信(M2M)和物联网(IoT)等需要小内存占用，或带宽非常昂贵的受限环境。” MQTT 3.1.1 specification 引文<br /><br>上述引文很好的描述了MQTT是什么，它是一个非常轻量的二进制协议，并且由于它非常小的数据包开销，MQTT比HTTP协议更适合在电线间传输数据。MQTT协议另一个重要的优点是在客户端的实现非常容易。易用性是MQTT开发过程中的一个关键考量，这也让MQTT如今完美的适配了资源有限制的被约束设备。</p>
+<h3 id="一些历史"><a href="#一些历史" class="headerlink" title="一些历史"></a>一些历史</h3><p>MQTT协议在1999年被 Andy Stanford-Clark (IBM) 和 Arlen Nipper (Arcom, now Cirrus Link) 发明出，他们需要一个低电量消耗、低带宽消耗的协议，用于通过卫星与输油管道连接。这两位发明者为此协议定下了一些必须的要求:</p>
+<ul>
+<li>实现简单</li>
+<li>保证数据传输的质量</li>
+<li>轻量级并且高效使用带宽</li>
+<li>Data agnostic</li>
+<li>Continuous session awareness</li>
+</ul>
+<p>这些目标一直是MQTT的核心。然而，协议最专注的部分已经由嵌入式设备转换到物联网应用上了。这个转换使MQTT所代表的全拼词语有了一些争议。简短的答案是，MQTT不再是一个缩写，而是一个协议的名称。<br /><br>较为详细的答案是 MQTT在之前是MQ Telemetry Transport的缩写 <br /><br>“MQ”代表的是IBM为了支持MQ Telemetry Transport开发的产品，当Andy和Arlen在1999年创造这个协议时，他们在IBM产品之后将其命名为MQTT。 许多地方错误的将MQTT解释为消息队列协议。MQTT不是一个传统的消息队列解决方案(尽管MQTT在一些特殊情况可能会用队列缓冲消息，我们在后面的章节会讲到)。在1999之后的10年里，IBM在内部使用这个协议，直到2010年他们发布了MQTT3.1作为一个无版权的发布版本。从那时开始，每个人都被欢迎去开发和使用MQTT协议。<br /><br>我们在2012年开始了解MQTT，并在同年发布了HiveMQ的第一个版本。2013年，我们公开发布了HiveMQ。随着协议规范的发布，IBM捐献MQTT客户端实现给Eclipse基金会新成立的Paho课题。这些件事对MQTT协议有重大的影响，因为没有生态支持的协议很难被广泛的使用。</p>
+<h3 id="OASIS标准和当前版本"><a href="#OASIS标准和当前版本" class="headerlink" title="OASIS标准和当前版本"></a>OASIS标准和当前版本</h3><p>大约在MQTT初始版本发布三年后，MQTT将由OASIS（一个致力于推进标准化的开源组织）定制标准。AMQP,SAML,和DocBook只是OASIS标准的一部分。标准化进程持续了大约一年，在2014年10月29日MQTT成为一个正式批准的OASIS标准。从3.1到3.1.1的小版本变化展现了和之前版本的变化。对于这些变化的细节信息，看另一篇博客 3.1.1带来的优势。 <br /><br>在2019年3月，OASIS批准了新的MQTT5规范。新的MQTT版本引进了将物联网程序部署在云平台上所必须的特性，其中要求在实现关键消息的传输时需要有更高的可靠性和完善的错误处理。如果想要更多的了解MQTT5，请查看我们MQTT5相关系列文章。</p>
+<blockquote>
+<p>我们强烈建议使用MQTT 5。</p>
+</blockquote>
+<p>到了我们系列文章第一篇的结尾了，希望你阅读愉快并且了解到一些MQTT的新闻。感谢你的阅读请在下周继续关注我们的下篇介绍文章，关于发布和订阅模式还有MQTT与消息队列的不同之处 <br /></p>
+<p>如果你有任何反馈或问题，请在评论中告诉我们。</p>
+</div>
+        
+  </div>
+
+    <div class="post_tags">
+      
+        <i class="fas fa-tag"></i> <a href="/tags/MQTT/" class="tag">MQTT</a>
+      
+    </div>
+    <div class="post-nav">
+      
+        <div class="post-nav-prev post-nav-item">
+            <a href="/2021/11/10/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%BA%8C-%E5%8F%91%E5%B8%83%E5%92%8C%E8%AE%A2%E9%98%85/" >MQTT基础文档翻译(二):发布和订阅<i class="fa fa-chevron-left"></i></a>
+        </div>
+      
+      
+        <div class="post-nav-next post-nav-item">
+            <a href="/2021/11/02/Qt%E4%BF%A1%E5%8F%B7%E6%A7%BD%E6%9C%BA%E5%88%B6%E6%B5%85%E6%9E%90/" >Qt信号槽机制浅析<i class="fa fa-chevron-right"></i></a>
+        </div>
+      
+    </div>
+      
+
+
+
+
+</article>
+
+    
+<a id="gotop" href="javascript:" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    
+
+
+
+
+
+
+    
+<div id="bottom-outer">
+    <div id="bottom-inner">
+        © 2020 <i class="fa fa-heart" id="heart"></i> Liujianfeng 
+        <br>
+        Powered by 
+        <a target="_blank" rel="noopener" href="http://hexo.io">hexo</a> | Theme is <a target="_blank" rel="noopener" href="https://github.com/a2396837/hexo-theme-blank/">blank</a>
+        
+          <div class="icp-info">
+            
+          <a href="" target="_blank"> </a>
+        </div>
+        
+    </div>  
+  </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/layui-src@2.5.5/dist/layui.min.js"></script>
+
+
+
+  
+    <script src="/js/script.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script>
+  
+
+ 
+
+
+
+  <script>
+    window.lazyLoadOptions = {
+      elements_selector: 'img',
+      threshold: 0
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script>   
+  
+
+
+  <script>
+    var images = $('img').not('.nav-logo img').not('.card img').not($('a>img')).not('.reward-content img')
+    images.each(function (i, o) {
+      var lazyloadSrc = $(o).attr('data-src') ? $(o).attr('data-src') : $(o).attr('src')
+      $(o).wrap(`<a href="${lazyloadSrc}" data-fancybox="group" data-caption="${$(o).attr('alt')}" class="fancybox"></a>`)
+    })
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script>
+  <script>
+        $().fancybox({
+      selector: '[data-fancybox]',
+      loop: true,
+      transitionEffect: 'slide',
+      protect: true,
+      buttons: ['slideShow', 'fullScreen', 'thumbs', 'close']
+    })
+  </script>   
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script>
+  
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js"></script>
+<script>
+!function (e, t, a) {
+  var initCopyCode = function(){
+    var copyHtml = '';
+    copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+    copyHtml += '  <i class="fa fa-clipboard"></i><span>复制</span>';
+    copyHtml += '</button>';
+    $(".highlight .code pre").before(copyHtml);
+    new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+  }
+  initCopyCode();
+}(window, document);
+</script>  
+  
+
+<script>
+  var btntop = $('#gotop');
+  btntop.on('click', function (e) {
+    e.preventDefault();
+    $('html, body').animate({ scrollTop: 0 }, '300');
+  });
+
+  var $table = $('.content table').not($('figure.highlight > table'))
+$table.each(function () {
+  $(this).wrap('<div class="table-wrap"></div>')
+})
+</script>
+
+
+
+</html>

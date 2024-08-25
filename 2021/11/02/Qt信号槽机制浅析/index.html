@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+    <link rel="icon" href="/img/avatar.jpg">
+  
+  
+      <meta name="author" content="Liujianfeng">
+  
+  
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="刘剑峰(stranded1996@gmail.com)" type="application/atom+xml">
+  
+
+  
+
+  <title>Qt信号槽机制浅析 | 刘剑峰(stranded1996@gmail.com)</title>
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-216816473-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+
+  
+
+  <link rel="stylesheet" href="/css/style.css" >
+  <link rel="stylesheet" href="/css/partial/dark.css" >
+
+  
+  
+  
+
+  
+    
+      <link rel="stylesheet" href="/css/partial/highlight/atom-one-light.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/a2396837/CDN@latest/css/iconfont.css">
+    
+  
+
+  
+    <script src="/js/todark.js"></script>
+    
+<meta name="generator" content="Hexo 5.4.0"></head>
+</html>
+    
+<div class="nav index" style="height: 60px;">
+    <div class="title animated fadeInDown">
+        <div class="layui-container">
+                <div class="nav-title"><a href="/" title="刘剑峰(stranded1996@gmail.com)">刘剑峰(stranded1996@gmail.com)</a></div>
+            <div class="nav-list">
+                <button> <span class=""></span><span style="display: block;"></span><span class=""></span> </button>
+                <ul class="layui-nav" lay-filter="">
+                    
+                    
+                        <li class="layui-nav-item" id="btn-toggle-dark">🌙</li>
+                    
+                    <span class="layui-nav-bar" style="left: 342px; top: 78px; width: 0px; opacity: 0;"></span>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<header class="header">
+        
+            <div class="logo">
+                    <a href="/"><img src="/img/avatar.jpg" onerror=this.onerror=null,this.src="/img/loading.gif"></a>
+            </div>
+         
+    </div>
+     
+
+            <div class="motto">
+                <span></span>
+            </div>
+    
+     
+</header>
+
+    
+<article id="post">
+  <div class="post-title">Qt信号槽机制浅析</div>
+  
+<div class="post-meta">
+    
+    
+      <div class="post-meta-item date">
+        <span title="Created 2021.11.02"><i class="far fa-calendar-alt"></i> 2021.11.02</span>
+      </div>
+      <div class="post-meta-item updated">
+        <span title="Updated 2021.11.13"><i class="far fa-calendar-check"></i> 2021.11.13</span>
+      </div>
+     
+     
+    
+     <div class="post-meta-item wordcount">
+        
+          <i class="fas fa-pencil-alt"></i> <span class="post-count">2.2k words</span>
+           
+        
+          <i class="far fa-clock"></i> <span class="post-count">9 min</span>
+                               
+      </div>
+     
+</div>
+
+
+  
+  <div class="content">
+        <div><p>Qt是一个跨平台的C++软件开发框架，而Qt的核心机制是信号槽，关于信号槽，Qt官方的表述是:</p>
+<span id="more"></span>
+<blockquote>
+<p>Signals and slots are used for communication between objects. The signals and slots mechanism is a central feature of Qt and probably the part that differs most from the features provided by other frameworks. Signals and slots are made possible by Qt’s meta-object system.</p>
+</blockquote>
+<p>信号和槽被用于对象间的沟通，信号槽机制是Qt的核心特点，也是Qt与其他应用框架的不同之处，信号槽的机制得益于Qt的元对象系统。<br>下面分两步来对Qt的信号槽机制做一个简单分析。</p>
+<h2 id="从Qt程序的编译过程讲起"><a href="#从Qt程序的编译过程讲起" class="headerlink" title="从Qt程序的编译过程讲起"></a>从Qt程序的编译过程讲起</h2><p>一个普通C++程序的编译需要经过以下几个步骤</p>
+<ul>
+<li>预处理(Prepressing): 主要处理源代码中以“#”开始的预编译命令，例如”#include”将被包含文件插入到该指令位置、 处理”#if”、”ifdef”等条件预编译指令、删除注释</li>
+<li>编译(Compilation): 将预处理完的文件进行词法分析、语法分析、语义分析生成相应的汇编代码文件</li>
+<li>汇编(Assembly): 将编译生成的汇编代码转化成机器可以执行的指令，生成目标文件</li>
+<li>链接(Linking): 组织汇编生成的目标文件和编译环境下相关的运行时库，将各个模块之间的相互引用部分处理好，使得各个模块间能够正确的衔接<br>Qt程序的编译与C++程序的编译主要区别在于moc系统</li>
+</ul>
+<blockquote>
+<p>The Meta-Object Compiler, moc, is the program that handles Qt’s C++ extensions. The moc tool reads a C++ header file. If it finds one or more class declarations that contain the Q_OBJECT macro, it produces a C++ source file containing the meta-object code for those classes. Among other things, meta-object code is required for the signals and slots mechanism, the run-time type information, and the dynamic property system</p>
+</blockquote>
+<p>元对象编译器是处理Qt的C++拓展程序， moc工具读取C++头文件，如果在文件中找到一个或多个Q_OBJECT宏，它将会生成一个包含对应类元对象代码的C++源文件，除此之外，元对象代码是信号槽机制、运行时类型信息、动态属性系统所必须的。<br>一个最简单的不带界面和资源文件，只使用信号槽机制的Qt程序的编译过程就是，在普通C++程序编译的过程前对包含Q_OBJECT的类使用moc工具生成对应的元对象代码，即 元对象编译-&gt;预处理-&gt;编译-&gt;汇编-&gt;链接。<br>下面用一个例子来验证。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">testSignalSlot</span><br><span class="line">├── main.cpp</span><br><span class="line">├── reciver.cpp</span><br><span class="line">├── reciver.h</span><br><span class="line">├── sender.cpp</span><br><span class="line">└── sender.h</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//reciver.h</span><br><span class="line">#ifndef RECIVER_H</span><br><span class="line">#define RECIVER_H</span><br><span class="line"></span><br><span class="line">#include &lt;QObject&gt;</span><br><span class="line"></span><br><span class="line">class Reciver : public QObject</span><br><span class="line">&#123;</span><br><span class="line">    Q_OBJECT</span><br><span class="line">public:</span><br><span class="line">    explicit Reciver(QObject *parent = nullptr);</span><br><span class="line">public slots:</span><br><span class="line">    void recive();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">#endif // RECIVER_H</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//reciver.cpp</span><br><span class="line">#include &quot;reciver.h&quot;</span><br><span class="line"></span><br><span class="line">#include &lt;QDebug&gt;</span><br><span class="line">Reciver::Reciver(QObject *parent) : QObject(parent)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Reciver::recive()</span><br><span class="line">&#123;</span><br><span class="line">    qDebug()&lt;&lt;&quot;Hello Qt!&quot;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//sender.h</span><br><span class="line">#ifndef SENDER_H</span><br><span class="line">#define SENDER_H</span><br><span class="line"></span><br><span class="line">#include &lt;QObject&gt;</span><br><span class="line"></span><br><span class="line">class Sender : public QObject</span><br><span class="line">&#123;</span><br><span class="line">    Q_OBJECT</span><br><span class="line">public:</span><br><span class="line">    explicit Sender(QObject *parent = nullptr);</span><br><span class="line"></span><br><span class="line">signals:</span><br><span class="line">    void send();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">#endif // SENDER_H</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//sender.cpp</span><br><span class="line">#include &quot;sender.h&quot;</span><br><span class="line"></span><br><span class="line">Sender::Sender(QObject *parent) : QObject(parent)</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">main.cpp</span><br><span class="line">#include &lt;QCoreApplication&gt;</span><br><span class="line"></span><br><span class="line">#include &quot;sender.h&quot;</span><br><span class="line">#include &quot;reciver.h&quot;</span><br><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    QCoreApplication a(argc, argv);</span><br><span class="line">    Sender sender;</span><br><span class="line">    Reciver reciver;</span><br><span class="line">    QObject::connect(&amp;sender, &amp;Sender::send,</span><br><span class="line">                     &amp;reciver, &amp;Reciver::recive);</span><br><span class="line">    emit sender.send();</span><br><span class="line">    return a.exec();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先使用moc工具为sender 和 reciver 生成moc代码 moc路径</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Qt\5.15.2\mingw81_64\bin\moc.exe</span><br></pre></td></tr></table></figure>
+
+<p>执行moc</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ moc sender.h -o moc_sender.cpp</span><br><span class="line">$ moc reciver.h -o moc_reciver.cpp</span><br></pre></td></tr></table></figure>
+
+<p>完成后目录</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">testSignalSlot</span><br><span class="line">├── main.cpp</span><br><span class="line">├── moc_reciver.cpp     (moc生成代码)</span><br><span class="line">├── moc_sender.cpp      (moc生成代码)</span><br><span class="line">├── reciver.cpp</span><br><span class="line">├── reciver.h</span><br><span class="line">├── sender.cpp</span><br><span class="line">└── sender.h</span><br></pre></td></tr></table></figure>
+
+<p>使用g++生成目标文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ g++ -c  -IC:\\Qt\\5.15.2\\mingw81_64\\include -IC:\\Qt\\5.15.2\\mingw81_64\\include\\QtCore  -o reciver.o reciver.cpp</span><br><span class="line">$ g++ -c  -IC:\\Qt\\5.15.2\\mingw81_64\\include -IC:\\Qt\\5.15.2\\mingw81_64\\include\\QtCore  -o sender.o sender.cpp</span><br><span class="line">$ g++ -c  -IC:\\Qt\\5.15.2\\mingw81_64\\include -IC:\\Qt\\5.15.2\\mingw81_64\\include\\QtCore  -o moc_reciver.o moc_reciver.cpp</span><br><span class="line">$ g++ -c  -IC:\\Qt\\5.15.2\\mingw81_64\\include -IC:\\Qt\\5.15.2\\mingw81_64\\include\\QtCore  -o moc_sender.o moc_sender.cpp</span><br><span class="line">$ g++ -c  -IC:\\Qt\\5.15.2\\mingw81_64\\include -IC:\\Qt\\5.15.2\\mingw81_64\\include\\QtCore  -o main.o main.cpp</span><br></pre></td></tr></table></figure>
+
+<p>生成可执行文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">g++ -o testSignalSlot.exe main.o reciver.o sender.o moc_reciver.o moc_sender.o  C:\\Qt\\5.15.2\\mingw81_64\\lib\\libQt5Core.a</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>到此编译完成，完成后目录:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">testSignalSlot</span><br><span class="line">├── testSignalSlot.exe</span><br><span class="line">├── main.cpp</span><br><span class="line">├── main.o</span><br><span class="line">├── moc_reciver.cpp</span><br><span class="line">├── moc_reciver.o</span><br><span class="line">├── moc_sender.cpp</span><br><span class="line">├── moc_sender.o</span><br><span class="line">├── reciver.cpp</span><br><span class="line">├── reciver.h</span><br><span class="line">├── reciver.o</span><br><span class="line">├── sender.cpp</span><br><span class="line">├── sender.h</span><br><span class="line">└── sender.o</span><br></pre></td></tr></table></figure>
+
+<p>运行验证一下:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ ./testSignalSlot.exe</span><br><span class="line">Hello Qt!</span><br></pre></td></tr></table></figure>
+
+<h2 id="用标准C-完成一个简易的信号槽"><a href="#用标准C-完成一个简易的信号槽" class="headerlink" title="用标准C++完成一个简易的信号槽"></a>用标准C++完成一个简易的信号槽</h2><p>经过第一部分的了解后，我们知道元对象系统会使用moc工具对带有Q_OBJECT宏的头文件生成一份带有元对象信息的moc_xxx.cpp文件，那么我们应该可以手动编写moc_xxx.cpp代码,来完成moc所做的事情。<br>接下来我们用标准C++来实现一个简易的信号槽机制，用以简单说明信号槽的实现原理。将手动编写以下几个文件，样例代码上传在github上。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/liujianfengv/iso-cpp-reimp-signal-slot">iso-cpp-reimp-signal-slot</a></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── main.cpp</span><br><span class="line">├── moc_object.cpp</span><br><span class="line">├── object.cpp</span><br><span class="line">├── object.h</span><br></pre></td></tr></table></figure>
+
+<p>信号槽的实现大致需要以下几点</p>
+<ul>
+<li>类中应该保存有信号和槽的字符串信息</li>
+<li>字符串和信号槽函数要关联，有对应关系</li>
+<li>类实例中应该存有信号和监听该信号的reciver和槽函数的信息，通过connect借助字符串完成对象间信号和槽的关联</li>
+<li>信号触发时通过上述信息完成槽函数的调用</li>
+</ul>
+<p>所以，首先我们定义一个结构体，里面存放信号和槽的名称信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//object.h</span><br><span class="line">struct MetaObject</span><br><span class="line">&#123;</span><br><span class="line">    const char * sig_names;     //存放信号函数字符串</span><br><span class="line">    const char * slts_names;    //存放槽函数字符串</span><br><span class="line">&#125;;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>并且将其作为一个静态成员变量放入Object类中,这样所有Object的实例就都拥有了信号和槽的字符串信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//object.h</span><br><span class="line">class Object</span><br><span class="line">&#123;</span><br><span class="line">    static MetaObject meta;</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<p>然后，在自己生成的moc_object.cpp文件中填充这个结构体信息， 当有多个信号或槽时，我们约定将所有信号的字符串连接起来并用’\n’分割，这样每个信号或槽就有了一个对应的索引信息。 示例中使用信号 click 和 槽函数 onClick </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//moc_object.cpp</span><br><span class="line">static const char sig_names[] = &quot;click\n&quot;;</span><br><span class="line">static const char slts_names[] = &quot;onClick\n&quot;;</span><br><span class="line">MetaObject Object::meta = &#123;sig_names, slts_names&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>接下来为每个对象保存连接信息，首先定义一个结构体。并定义一个mutimap作为Object的私有成员变量</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//object.h</span><br><span class="line">struct Connection</span><br><span class="line">&#123;</span><br><span class="line">    Object *receiver;</span><br><span class="line">    int method;         //槽函数字符串索引</span><br><span class="line">&#125;;</span><br><span class="line">typedef std::multimap&lt;int, Connection&gt; ConnectionMap;</span><br><span class="line">...</span><br><span class="line">class Object&#123;</span><br><span class="line">    ...</span><br><span class="line">private:</span><br><span class="line">    // key:信号函数索引 value:连接信息(接收者指针，接收者槽函数索引)</span><br><span class="line">     ConnectionMap connections;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后定义一个connect方法:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">void Object::connect(Object* sender, const char* sig, Object* receiver, const char* slt)</span><br><span class="line">&#123;</span><br><span class="line">    int sig_idx = find_substr_index(sender-&gt;meta.sig_names, sig);</span><br><span class="line">    int slt_idx = find_substr_index(receiver-&gt;meta.slts_names, slt);</span><br><span class="line">    if (sig_idx == -1 || slt_idx == -1) &#123;</span><br><span class="line">        perror(&quot;signal or slot not found!&quot;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        Connection c = &#123;receiver, slt_idx&#125;;</span><br><span class="line">        sender-&gt;connections.insert(std::pair&lt;int, Connection&gt;(sig_idx, c));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到此，类中的信号和槽相关信息都已经完成，接下来就是信号的触发了。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#define slots</span><br><span class="line">#define signals protected</span><br><span class="line">#define emit</span><br><span class="line">...</span><br><span class="line">signals:</span><br><span class="line">    void click();</span><br><span class="line">public slots:</span><br><span class="line">    void onClick();</span><br></pre></td></tr></table></figure>
+
+<p>信号和槽函数其实都是普通的函数，类似signals、slots关键字都只是一个标识，信号和槽的区别是，槽函数需要我们自己去实现，而信号函数会由moc替我们实现在moc_xxx.cpp文件中，而这里，我们需要自己去实现这个信号对应的函数。<br>这里又用到之前的元对象,在其中添加active方法</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//object.h</span><br><span class="line">struct MetaObject</span><br><span class="line">&#123;</span><br><span class="line">    const char * sig_names;     //存放信号函数字符串</span><br><span class="line">    const char * slts_names;    //存放槽函数字符串</span><br><span class="line">    static void active(Object * sender, int idx);</span><br><span class="line">&#125;;</span><br><span class="line">//object.cpp</span><br><span class="line">void MetaObject::active(Object* sender, int idx)</span><br><span class="line">&#123;</span><br><span class="line">    auto ret = sender-&gt;connections.equal_range(idx);</span><br><span class="line">    for (auto it = ret.first; it != ret.second; ++it) &#123;</span><br><span class="line">        Connection c = (*it).second;</span><br><span class="line">        //按索引调用receiver对应的槽函数</span><br><span class="line">        c.receiver-&gt;metacall(c.method);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//moc_object.cpp</span><br><span class="line">void Object::click()</span><br><span class="line">&#123;</span><br><span class="line">    // 0 即为当前信号名字符串在meta.sig_names中的索引位置</span><br><span class="line">    MetaObject::active(this, 0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//通过索引调用槽函数 </span><br><span class="line">void Object::metacall(int idx)</span><br><span class="line">&#123;</span><br><span class="line">    switch (idx) &#123;</span><br><span class="line">        case 0:</span><br><span class="line">        // 0 即为此槽函数名字符串在meta.slts_names中的索引位置</span><br><span class="line">            onClick();</span><br><span class="line">            break;</span><br><span class="line">        default:</span><br><span class="line">            break;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>至此，一个用C++实现的简单的信号槽就完成了，简单编译测试下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">g++ main.cpp object.cpp moc_object.cpp -o test.exe</span><br><span class="line">$ ./test.exe</span><br><span class="line">Hello Qt!</span><br></pre></td></tr></table></figure>
+
+<p>我现在使用的Qt版本是5.15.2，信号槽相关的源代码已经特别的多，充斥着各种宏和模板的奇计淫巧，还有多线程等其他特性相关的代码，看起来比较吃力，但也可以看到信号槽最基本的概念大体如此。这篇文章就先到这里，后续可能会写一篇对Qt5.15.2源代码中信号槽机制具体实现的分析。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://doc.qt.io/archives/qt-4.8/moc.html">Using the Meta-Object Compiler (moc)</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/dbzhang800/article/details/6376422">用ISO C++实现自己的信号槽(Qt另类学习)</a></li>
+</ul>
+</div>
+        
+  </div>
+
+    <div class="post_tags">
+      
+        <i class="fas fa-tag"></i> <a href="/tags/Qt/" class="tag">Qt</a>
+      
+    </div>
+    <div class="post-nav">
+      
+        <div class="post-nav-prev post-nav-item">
+            <a href="/2021/11/08/MQTT%E5%9F%BA%E7%A1%80%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E4%B8%80-MQTT%E5%8D%8F%E8%AE%AE%E4%BB%8B%E7%BB%8D/" >MQTT基础文档翻译(一):MQTT协议介绍<i class="fa fa-chevron-left"></i></a>
+        </div>
+      
+      
+    </div>
+      
+
+
+
+
+</article>
+
+    
+<a id="gotop" href="javascript:" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    
+
+
+
+
+
+
+    
+<div id="bottom-outer">
+    <div id="bottom-inner">
+        © 2020 <i class="fa fa-heart" id="heart"></i> Liujianfeng 
+        <br>
+        Powered by 
+        <a target="_blank" rel="noopener" href="http://hexo.io">hexo</a> | Theme is <a target="_blank" rel="noopener" href="https://github.com/a2396837/hexo-theme-blank/">blank</a>
+        
+          <div class="icp-info">
+            
+          <a href="" target="_blank"> </a>
+        </div>
+        
+    </div>  
+  </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/layui-src@2.5.5/dist/layui.min.js"></script>
+
+
+
+  
+    <script src="/js/script.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script>
+  
+
+ 
+
+
+
+  <script>
+    window.lazyLoadOptions = {
+      elements_selector: 'img',
+      threshold: 0
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script>   
+  
+
+
+  <script>
+    var images = $('img').not('.nav-logo img').not('.card img').not($('a>img')).not('.reward-content img')
+    images.each(function (i, o) {
+      var lazyloadSrc = $(o).attr('data-src') ? $(o).attr('data-src') : $(o).attr('src')
+      $(o).wrap(`<a href="${lazyloadSrc}" data-fancybox="group" data-caption="${$(o).attr('alt')}" class="fancybox"></a>`)
+    })
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script>
+  <script>
+        $().fancybox({
+      selector: '[data-fancybox]',
+      loop: true,
+      transitionEffect: 'slide',
+      protect: true,
+      buttons: ['slideShow', 'fullScreen', 'thumbs', 'close']
+    })
+  </script>   
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script>
+  
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js"></script>
+<script>
+!function (e, t, a) {
+  var initCopyCode = function(){
+    var copyHtml = '';
+    copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+    copyHtml += '  <i class="fa fa-clipboard"></i><span>复制</span>';
+    copyHtml += '</button>';
+    $(".highlight .code pre").before(copyHtml);
+    new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+  }
+  initCopyCode();
+}(window, document);
+</script>  
+  
+
+<script>
+  var btntop = $('#gotop');
+  btntop.on('click', function (e) {
+    e.preventDefault();
+    $('html, body').animate({ scrollTop: 0 }, '300');
+  });
+
+  var $table = $('.content table').not($('figure.highlight > table'))
+$table.each(function () {
+  $(this).wrap('<div class="table-wrap"></div>')
+})
+</script>
+
+
+
+</html>
